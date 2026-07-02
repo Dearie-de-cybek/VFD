@@ -6,6 +6,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ScrollFx from "@/components/ScrollFx";
 import { POSTS } from "@/lib/posts";
+import { IconSparkle } from "@/components/icons";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -47,7 +48,7 @@ export default async function BlogPostPage({ params }: Props) {
                     Home
                   </Link>
                 </li>
-                <li aria-hidden className="text-gold">✦</li>
+                <li aria-hidden><IconSparkle className="h-3 w-3 text-gold" /></li>
                 <li>
                   <Link href="/blogs" className="transition-colors hover:text-gold-soft">
                     Blogs

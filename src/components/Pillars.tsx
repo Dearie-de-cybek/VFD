@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
+import { IconSparkle } from "./icons";
 
 const PILLARS = [
   {
@@ -118,13 +119,11 @@ export default function Pillars() {
                     }`}
                   >
                     <span className="text-lg font-medium">{item.name}</span>
-                    <span
-                      className={`text-gold transition-opacity ${
+                    <IconSparkle
+                      className={`h-4 w-4 text-gold transition-opacity ${
                         i === active ? "opacity-100" : "opacity-0"
                       }`}
-                    >
-                      ✦
-                    </span>
+                    />
                   </button>
                 </li>
               ))}

@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 import TreeLogo from "./TreeLogo";
+import { IconCheck } from "./icons";
 
 const NIGERIAN_STATES = [
   "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue",
@@ -214,7 +215,7 @@ export default function JoinForm() {
                       : "border-cream/25 text-cream/40"
                 }`}
               >
-                {done || i < step ? "✓" : i + 1}
+                {done || i < step ? <IconCheck className="h-3.5 w-3.5" /> : i + 1}
               </span>
               <span
                 className={`text-sm transition-colors duration-300 ${

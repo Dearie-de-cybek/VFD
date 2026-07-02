@@ -14,15 +14,21 @@ export default function ScrollFx() {
     const mm = gsap.matchMedia();
 
     mm.add("(prefers-reduced-motion: no-preference)", () => {
-      gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((el) => {
-        gsap.from(el, {
-          y: 40,
-          opacity: 0,
-          filter: "blur(6px)",
-          duration: 0.8,
-          ease: "power3.out",
-          scrollTrigger: { trigger: el, start: "top 86%" },
-        });
+      // batched into one shared ScrollTrigger set instead of one per element —
+      // ~25+ individual triggers polling on every Lenis scroll frame was
+      // visibly janky on desktop
+      ScrollTrigger.batch("[data-reveal]", {
+        start: "top 86%",
+        onEnter: (els) =>
+          gsap.from(els, {
+            y: 40,
+            opacity: 0,
+            filter: "blur(6px)",
+            duration: 0.8,
+            stagger: 0.08,
+            ease: "power3.out",
+            overwrite: true,
+          }),
       });
 
       gsap.utils.toArray<HTMLElement>("[data-parallax]").forEach((el) => {

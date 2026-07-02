@@ -3,13 +3,21 @@
 import { useRef, useState } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 import TreeLogo from "./TreeLogo";
+import { IconSeedling, IconSprout, IconTree, IconPrint, IconPencil, IconCheck } from "./icons";
 import {
   QUESTIONS,
   BANDS,
   bandFor,
   LEVELS,
+  type Band,
   type Question,
 } from "@/lib/scorecard";
+
+const BAND_ICON: Record<Band["icon"], typeof IconSeedling> = {
+  seedling: IconSeedling,
+  sprout: IconSprout,
+  tree: IconTree,
+};
 
 type Phase = "setup" | "quiz" | "review" | "done";
 
@@ -238,8 +246,9 @@ export default function ScorecardForm() {
                 Start scoring
               </button>
               <button onClick={() => printCard("blank")}
-                className="rounded-full border border-ink/20 px-8 py-4 text-sm font-semibold transition-colors hover:border-forest hover:text-forest">
-                🖨 Print blank scorecard for the teacher
+                className="inline-flex items-center gap-2 rounded-full border border-ink/20 px-8 py-4 text-sm font-semibold transition-colors hover:border-forest hover:text-forest">
+                <IconPrint className="h-4 w-4" />
+                Print blank scorecard for the teacher
               </button>
             </div>
           </div>
@@ -275,7 +284,10 @@ export default function ScorecardForm() {
                         : "border-ink/10 bg-paper hover:border-ink/30"
                     }`}
                     style={selected ? { background: b.color } : undefined}>
-                    <span className="text-2xl">{b.emoji}</span>
+                    {(() => {
+                      const Icon = BAND_ICON[b.icon];
+                      return <Icon className="h-6 w-6" style={{ color: selected ? "currentColor" : b.color }} />;
+                    })()}
                     <span className="mt-1 block text-sm font-bold">{b.label}</span>
                     <span className={`text-xs ${selected ? "text-white/70" : "text-ink/40"}`}>
                       {b.range}
@@ -310,8 +322,9 @@ export default function ScorecardForm() {
             </div>
 
             <details className="mt-5 rounded-xl border border-ink/10 p-4 open:bg-paper">
-              <summary className="cursor-pointer text-sm font-semibold text-ink/60">
-                ✎ Add a remark for this question (optional)
+              <summary className="inline-flex cursor-pointer items-center gap-2 text-sm font-semibold text-ink/60">
+                <IconPencil className="h-3.5 w-3.5" />
+                Add a remark for this question (optional)
               </summary>
               <textarea rows={2} value={remarks[q.id] ?? ""}
                 onChange={(e) => setRemarks((r) => ({ ...r, [q.id]: e.target.value }))}
@@ -356,9 +369,10 @@ export default function ScorecardForm() {
                       </span>
                       <span className="flex-1 text-sm leading-snug">{item.text}</span>
                       {b ? (
-                        <span className="shrink-0 rounded-full px-3 py-1 text-xs font-bold text-white"
+                        <span className="inline-flex shrink-0 items-center gap-1 rounded-full px-3 py-1 text-xs font-bold text-white"
                           style={{ background: b.color }}>
-                          {b.emoji} {s}
+                          {(() => { const Icon = BAND_ICON[b.icon]; return <Icon className="h-3 w-3" />; })()}
+                          {s}
                         </span>
                       ) : (
                         <span className="shrink-0 rounded-full bg-ink/10 px-3 py-1 text-xs font-semibold text-ink/50">
@@ -401,8 +415,9 @@ export default function ScorecardForm() {
                 ← Back
               </button>
               <button type="button" onClick={() => setPhase("done")}
-                className="rounded-full bg-gold px-9 py-3.5 text-sm font-bold uppercase tracking-wider text-forest-deep transition-transform hover:-translate-y-0.5">
-                🌳 See the results
+                className="inline-flex items-center gap-2 rounded-full bg-gold px-9 py-3.5 text-sm font-bold uppercase tracking-wider text-forest-deep transition-transform hover:-translate-y-0.5">
+                <IconTree className="h-4 w-4" />
+                See the results
               </button>
             </div>
           </div>
@@ -419,8 +434,8 @@ export default function ScorecardForm() {
                 <span className="sc-average">0</span>
                 <span className="text-3xl text-cream/40"> / 100</span>
               </p>
-              <p className="mt-4 text-2xl">
-                {overallBand.emoji}{" "}
+              <p className="mt-4 flex items-center justify-center gap-2 text-2xl">
+                {(() => { const Icon = BAND_ICON[overallBand.icon]; return <Icon className="h-6 w-6" />; })()}
                 <span className="font-display italic text-gold-soft">{overallBand.label}</span>
               </p>
               <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-cream/70">
@@ -442,8 +457,9 @@ export default function ScorecardForm() {
                     <li key={item.id}>
                       <div className="flex items-baseline justify-between gap-4">
                         <span className="text-sm font-semibold">{item.value}</span>
-                        <span className="font-mono text-xs" style={{ color: b.color }}>
-                          {b.emoji} {s}
+                        <span className="inline-flex items-center gap-1 font-mono text-xs" style={{ color: b.color }}>
+                          {(() => { const Icon = BAND_ICON[b.icon]; return <Icon className="h-3 w-3" />; })()}
+                          {s}
                         </span>
                       </div>
                       <div className="mt-1.5 h-2.5 overflow-hidden rounded-full bg-ink/8">
@@ -459,8 +475,9 @@ export default function ScorecardForm() {
             {/* holiday goals */}
             {weakest.length > 0 && (
               <div className="rounded-2xl border-2 border-gold/40 bg-gold/10 p-8 lg:p-10">
-                <h3 className="font-display text-2xl tracking-tight">
-                  🌱 Holiday goals — where to water first
+                <h3 className="flex items-center gap-2 font-display text-2xl tracking-tight">
+                  <IconSeedling className="h-6 w-6 text-gold" />
+                  Holiday goals — where to water first
                 </h3>
                 <ul className="mt-6 space-y-4">
                   {weakest.map((item) => (
@@ -479,8 +496,9 @@ export default function ScorecardForm() {
 
             <div className="flex flex-wrap items-center gap-4">
               <button onClick={() => printCard("filled")}
-                className="rounded-full bg-forest px-8 py-4 text-sm font-bold uppercase tracking-wider text-cream transition-colors hover:bg-forest-deep">
-                🖨 Print completed scorecard
+                className="inline-flex items-center gap-2 rounded-full bg-forest px-8 py-4 text-sm font-bold uppercase tracking-wider text-cream transition-colors hover:bg-forest-deep">
+                <IconPrint className="h-4 w-4" />
+                Print completed scorecard
               </button>
               <button onClick={() => printCard("blank")}
                 className="rounded-full border border-ink/20 px-8 py-4 text-sm font-semibold transition-colors hover:border-forest hover:text-forest">
@@ -527,9 +545,9 @@ export default function ScorecardForm() {
                 <tr key={item.id}>
                   <td className="border border-black p-2">{i + 1}</td>
                   <td className="border border-black p-2">{item.text}</td>
-                  <td className="border border-black p-2 text-center">{b?.key === "ni" ? `✓ ${s}` : ""}</td>
-                  <td className="border border-black p-2 text-center">{b?.key === "prog" ? `✓ ${s}` : ""}</td>
-                  <td className="border border-black p-2 text-center">{b?.key === "exp" ? `✓ ${s}` : ""}</td>
+                  <td className="border border-black p-2 text-center">{b?.key === "ni" ? <span className="inline-flex items-center gap-1"><IconCheck className="h-3 w-3" />{s}</span> : ""}</td>
+                  <td className="border border-black p-2 text-center">{b?.key === "prog" ? <span className="inline-flex items-center gap-1"><IconCheck className="h-3 w-3" />{s}</span> : ""}</td>
+                  <td className="border border-black p-2 text-center">{b?.key === "exp" ? <span className="inline-flex items-center gap-1"><IconCheck className="h-3 w-3" />{s}</span> : ""}</td>
                   <td className="border border-black p-2">{item.value}</td>
                   <td className="border border-black p-2">
                     {printMode === "filled" ? remarks[item.id] || "" : ""}

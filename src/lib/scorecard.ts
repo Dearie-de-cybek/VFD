@@ -95,7 +95,7 @@ export type Band = {
   key: "ni" | "prog" | "exp";
   label: string;
   range: string;
-  emoji: string;
+  icon: "seedling" | "sprout" | "tree";
   mid: number;
   color: string;
 };
@@ -105,7 +105,7 @@ export const BANDS: Band[] = [
     key: "ni",
     label: "Needs Improvement",
     range: "0–30",
-    emoji: "🌱",
+    icon: "seedling",
     mid: 15,
     color: "#b4552d",
   },
@@ -113,7 +113,7 @@ export const BANDS: Band[] = [
     key: "prog",
     label: "Progressing",
     range: "40–60",
-    emoji: "🌿",
+    icon: "sprout",
     mid: 50,
     color: "#c9a227",
   },
@@ -121,7 +121,7 @@ export const BANDS: Band[] = [
     key: "exp",
     label: "Expected Behaviour",
     range: "70–100",
-    emoji: "🌳",
+    icon: "tree",
     mid: 85,
     color: "#14432e",
   },

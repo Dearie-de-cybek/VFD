@@ -5,6 +5,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ScrollFx from "@/components/ScrollFx";
 import TreeLogo from "@/components/TreeLogo";
+import { IconSparkle } from "@/components/icons";
 
 export const metadata: Metadata = {
   title: "About Us — Values for Daily Living",
@@ -31,7 +32,7 @@ export default function AboutPage() {
                   Home
                 </Link>
               </li>
-              <li aria-hidden className="text-gold">✦</li>
+              <li aria-hidden><IconSparkle className="h-3 w-3 text-gold" /></li>
               <li className="text-gold-soft">About Us</li>
             </ol>
           </nav>

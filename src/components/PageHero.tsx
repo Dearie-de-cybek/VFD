@@ -1,5 +1,6 @@
 import Link from "next/link";
 import TreeLogo from "./TreeLogo";
+import { IconSparkle } from "./icons";
 
 type Props = {
   crumb: string;
@@ -25,7 +26,7 @@ export default function PageHero({ crumb, title, intro }: Props) {
                 Home
               </Link>
             </li>
-            <li aria-hidden className="text-gold">✦</li>
+            <li aria-hidden><IconSparkle className="h-3 w-3 text-gold" /></li>
             <li className="text-gold-soft">{crumb}</li>
           </ol>
         </nav>

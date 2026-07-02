@@ -9,6 +9,7 @@ const LINKS = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About Us" },
   { href: "/projects", label: "Our Projects" },
+  { href: "/events", label: "Events & Debates" },
   { href: "/blogs", label: "Blogs" },
   { href: "/assessment", label: "Moral Assessment Form" },
   { href: "/contact", label: "Contact Us" },
@@ -95,25 +96,25 @@ export default function Nav() {
       <header className="fixed inset-x-0 top-0 z-50">
         {/* top bar — contact + socials */}
         <div className="flex h-[var(--topbar-h)] items-center bg-forest-deep text-cream/85">
-          <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-6 px-6 md:px-12">
-            <div className="flex min-w-0 items-center gap-6 text-[11px] tracking-wide sm:text-xs">
-              <span className="flex min-w-0 items-center gap-1.5">
-                <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 shrink-0 fill-gold" aria-hidden>
+          <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-6 px-6 py-3 md:px-12">
+            <div className="flex min-w-0 items-center gap-7 text-sm tracking-wide sm:text-base">
+              <span className="flex min-w-0 items-center gap-2.5">
+                <svg viewBox="0 0 24 24" className="h-5 w-5 shrink-0 fill-gold sm:h-6 sm:w-6" aria-hidden>
                   <path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z" />
                 </svg>
                 <span className="min-w-0 truncate">127 Chime Avenue, New Haven, Enugu</span>
               </span>
               <a
                 href="tel:+2347030385985"
-                className="hidden shrink-0 items-center gap-1.5 transition-colors hover:text-gold-soft sm:flex"
+                className="hidden shrink-0 items-center gap-2.5 transition-colors hover:text-gold-soft sm:flex"
               >
-                <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 fill-gold" aria-hidden>
+                <svg viewBox="0 0 24 24" className="h-5 w-5 fill-gold sm:h-6 sm:w-6" aria-hidden>
                   <path d="M6.6 10.8a15.6 15.6 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.2.4 2.4.6 3.7.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.4c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.7.1.3 0 .7-.2 1l-2.2 2.1z" />
                 </svg>
                 +234 703 038 5985
               </a>
             </div>
-            <div className="flex shrink-0 items-center gap-4">
+            <div className="flex shrink-0 items-center gap-5">
               {SOCIALS.map((s) => (
                 <a
                   key={s.label}
@@ -123,7 +124,7 @@ export default function Nav() {
                   aria-label={s.label}
                   className="text-cream/70 transition-colors hover:text-gold-soft"
                 >
-                  <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current">
+                  <svg viewBox="0 0 24 24" className="h-6 w-6 fill-current sm:h-7 sm:w-7">
                     <path d={s.path} />
                   </svg>
                 </a>

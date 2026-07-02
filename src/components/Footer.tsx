@@ -41,6 +41,7 @@ export default function Footer() {
               {[
                 ["/about", "About Us"],
                 ["/projects", "Our Projects"],
+                ["/events", "Events & Debates"],
                 ["/blogs", "Blogs"],
                 ["/assessment", "Moral Assessment Form"],
                 ["/contact", "Contact Us"],
