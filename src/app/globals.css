@@ -1,26 +1,86 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-paper: #f6f2e8;
+  --color-paper-deep: #efe8d8;
+  --color-ink: #122a1e;
+  --color-forest: #14432e;
+  --color-forest-deep: #0c2b1d;
+  --color-moss: #3e6b52;
+  --color-gold: #c9a227;
+  --color-gold-soft: #e2c56d;
+  --color-cream: #fbf9f2;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-fraunces);
+  --font-body: var(--font-epilogue);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --nav-h: 5.5rem;
+  --topbar-h: 2.75rem;
+  --header-h: calc(var(--nav-h) + var(--topbar-h));
+}
+
+html {
+  scroll-behavior: auto;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-epilogue), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--color-gold);
+  color: var(--color-forest-deep);
+}
+
+/* film grain over everything, purely decorative */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.font-display {
+  font-family: var(--font-fraunces), Georgia, serif;
+}
+
+/* headline lines start hidden until GSAP reveals them */
+.reveal-line {
+  display: block;
+  overflow: hidden;
+  padding-block: 0.06em;
+}
+.reveal-line > span {
+  display: block;
+  will-change: transform;
+}
+
+/* generic scroll-reveal target: GSAP animates to visible */
+[data-reveal] {
+  will-change: transform, opacity;
+}
+
+.text-stroke-gold {
+  -webkit-text-stroke: 1px var(--color-gold);
+  color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
