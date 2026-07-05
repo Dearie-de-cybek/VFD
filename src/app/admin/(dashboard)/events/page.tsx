@@ -1,16 +1,20 @@
 import { prisma } from "@/lib/prisma";
-import AdminTable from "@/components/admin/AdminTable";
+import FolderGrid from "@/components/admin/FolderGrid";
 import { deleteEvent } from "./actions";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminEventsPage() {
-  const events = await prisma.event.findMany({ orderBy: { updatedAt: "desc" } });
+  const events = await prisma.event.findMany({
+    orderBy: { updatedAt: "desc" },
+    include: { _count: { select: { photos: true } } },
+  });
 
   const rows = events.map((e) => ({
     id: e.id,
     title: e.title,
     subtitle: `${e.category} · ${e.date}`,
+    photoCount: e._count.photos,
     published: e.published,
     updatedAt: e.updatedAt.toLocaleDateString("en-GB", {
       day: "numeric",
@@ -20,7 +24,7 @@ export default async function AdminEventsPage() {
   }));
 
   return (
-    <AdminTable
+    <FolderGrid
       rows={rows}
       editHrefBase="/admin/events"
       deleteAction={deleteEvent}

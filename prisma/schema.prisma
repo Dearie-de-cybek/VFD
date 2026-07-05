@@ -83,3 +83,31 @@ model Media {
   filename  String
   createdAt DateTime @default(now())
 }
+
+/// role: "AMBASSADOR" | "PARENT" | "SCHOOL_OWNER" | "TEACHER" (validated in app code — sqlite has no native enum)
+model Member {
+  id         String   @id @default(cuid())
+  name       String
+  email      String?
+  phone      String?
+  role       String
+  stage      String?
+  schoolName String?
+  notes      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+/// channel: "EMAIL" | "SMS", status: "SENT" | "FAILED"
+model Campaign {
+  id          String    @id @default(cuid())
+  channel     String
+  audience    String?
+  subject     String?
+  body        String
+  sentCount   Int       @default(0)
+  failedCount Int       @default(0)
+  status      String
+  createdAt   DateTime  @default(now())
+  sentAt      DateTime?
+}

@@ -10,6 +10,8 @@ const TITLES: Record<string, { title: string; quickAdd?: string }> = {
   "/admin/events": { title: "Events", quickAdd: "/admin/events/new" },
   "/admin/blogs": { title: "Blogs", quickAdd: "/admin/blogs/new" },
   "/admin/projects": { title: "Projects & Photos", quickAdd: "/admin/projects/new" },
+  "/admin/members": { title: "Members", quickAdd: "/admin/members/new" },
+  "/admin/newsletter": { title: "Newsletter" },
   "/admin/settings": { title: "Settings" },
 };
 
@@ -24,7 +26,9 @@ export default function AdminTopbar({
 }) {
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
-  const match = TITLES[pathname] ?? { title: segments.at(-1) ?? "Dashboard" };
+  const last = segments.at(-1) ?? "dashboard";
+  const fallbackTitle = last === "new" ? "New" : /^[a-z0-9]{20,}$/.test(last) ? "Edit" : last;
+  const match = TITLES[pathname] ?? { title: fallbackTitle };
 
   return (
     <header className="flex h-[72px] items-center justify-between gap-6 border-b border-[#E5E7EB] bg-white px-10 dark:border-white/10 dark:bg-[#0B0F0D]">

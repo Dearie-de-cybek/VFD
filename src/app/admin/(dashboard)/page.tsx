@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CalendarDays, Newspaper, Images, Image as ImageIcon } from "lucide-react";
+import { CalendarDays, Newspaper, Images, Users } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import StatCard from "@/components/admin/StatCard";
 
@@ -14,10 +14,11 @@ export default async function AdminDashboardPage() {
     eventsCount,
     postsCount,
     projectsCount,
-    mediaCount,
+    membersCount,
     eventsDelta,
     postsDelta,
     projectsDelta,
+    membersDelta,
     recentEvents,
     recentPosts,
     recentProjects,
@@ -25,10 +26,11 @@ export default async function AdminDashboardPage() {
     prisma.event.count(),
     prisma.post.count(),
     prisma.project.count(),
-    prisma.media.count(),
+    prisma.member.count(),
     prisma.event.count({ where: { createdAt: { gte: since } } }),
     prisma.post.count({ where: { createdAt: { gte: since } } }),
     prisma.project.count({ where: { createdAt: { gte: since } } }),
+    prisma.member.count({ where: { createdAt: { gte: since } } }),
     prisma.event.findMany({ orderBy: { updatedAt: "desc" }, take: 5 }),
     prisma.post.findMany({ orderBy: { updatedAt: "desc" }, take: 5 }),
     prisma.project.findMany({ orderBy: { updatedAt: "desc" }, take: 5 }),
@@ -63,7 +65,7 @@ export default async function AdminDashboardPage() {
         <StatCard icon={CalendarDays} label="Events" value={eventsCount} delta={eventsDelta} />
         <StatCard icon={Newspaper} label="Blog posts" value={postsCount} delta={postsDelta} />
         <StatCard icon={Images} label="Projects" value={projectsCount} delta={projectsDelta} />
-        <StatCard icon={ImageIcon} label="Media files" value={mediaCount} delta={0} />
+        <StatCard icon={Users} label="Members" value={membersCount} delta={membersDelta} />
       </div>
 
       <div className="rounded-2xl border border-[#E5E7EB] bg-white shadow-[0_1px_3px_rgba(0,0,0,.05)] dark:border-white/10 dark:bg-[#0F1512]">

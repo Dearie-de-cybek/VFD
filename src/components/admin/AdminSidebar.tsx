@@ -9,6 +9,8 @@ import {
   Images,
   Settings,
   HelpCircle,
+  Users,
+  Send,
 } from "lucide-react";
 import TreeLogo from "@/components/TreeLogo";
 
@@ -23,6 +25,13 @@ const GROUPS = [
       { href: "/admin/events", label: "Events", icon: CalendarDays, exact: false },
       { href: "/admin/blogs", label: "Blogs", icon: Newspaper, exact: false },
       { href: "/admin/projects", label: "Projects & Photos", icon: Images, exact: false },
+    ],
+  },
+  {
+    label: "Outreach",
+    items: [
+      { href: "/admin/members", label: "Members", icon: Users, exact: false },
+      { href: "/admin/newsletter", label: "Newsletter", icon: Send, exact: false },
     ],
   },
 ];
