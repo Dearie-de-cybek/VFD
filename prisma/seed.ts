@@ -1,20 +1,100 @@
-export type Post = {
-  slug: string;
-  title: string;
-  category: string;
-  date: string;
-  excerpt: string;
-  img: string;
-  alt: string;
-  body: string[];
-};
+import "dotenv/config";
+import bcrypt from "bcryptjs";
+import { PrismaClient } from "../src/generated/prisma/client";
+import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 
-export const POSTS: Post[] = [
+const adapter = new PrismaBetterSqlite3({ url: process.env.DATABASE_URL! });
+
+const prisma = new PrismaClient({ adapter });
+
+const EVENTS = [
+  {
+    title: "The Annual Values for Daily Living Conference",
+    category: "Conference",
+    date: "18–19 September 2026",
+    location: "Enugu, Nigeria",
+    desc: "Educators, parents, students and leaders gather for keynote sessions, essay competition awards and the commissioning of new youth ambassadors.",
+  },
+  {
+    title: "Inter-School Values Debate Championship",
+    category: "Debate",
+    date: "7 August 2026",
+    location: "Zonal heats — Enugu, Onitsha, Aba",
+    desc: "Secondary school teams argue live on integrity, honesty and civic responsibility, judged by educators and community leaders. Winners advance to the national final at the Annual Conference.",
+  },
+  {
+    title: "Community Values Gathering",
+    category: "Gathering",
+    date: "Last Saturday, monthly",
+    location: "Rotates across partner communities",
+    desc: "An open town-hall for parents, faith leaders and residents to discuss character formation in the home and neighbourhood — informal, conversational, always free to attend.",
+  },
+  {
+    title: "Parents & Teachers Values Workshop",
+    category: "Workshop",
+    date: "Ongoing — book a date",
+    location: "On-site at your school or church",
+    desc: "A half-day, hands-on session equipping the adults around a child with practical language and tools for values-driven correction and encouragement.",
+  },
+  {
+    title: "Youth Ambassadors Induction Ceremony",
+    category: "Gathering",
+    date: "October 2026",
+    location: "Enugu, Nigeria",
+    desc: "Each new cohort of Youth Ambassadors is publicly commissioned — a short, ceremonial gathering for ambassadors, their families and mentors.",
+  },
+];
+
+const PROJECTS = [
+  {
+    title: "School Values Tours",
+    tag: "Ongoing · Nationwide",
+    desc: "Moral education campaigns that bring values teaching directly into classrooms — assemblies, workshops and teacher resources delivered school by school.",
+    img: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1400&q=80",
+    alt: "A school classroom",
+  },
+  {
+    title: "Annual VDL Conference",
+    tag: "Yearly · Enugu",
+    desc: "Educators, parents, students and leaders gather each year to advance the national conversation on values, character and purposeful leadership.",
+    img: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1400&q=80",
+    alt: "An audience at a conference",
+  },
+  {
+    title: "Essay Competitions",
+    tag: "Yearly · Secondary Schools",
+    desc: "Students reflect deeply on character and citizenship through structured writing — with scholarships and prizes for the most thoughtful voices.",
+    img: "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1400&q=80",
+    alt: "A student writing with a fountain pen",
+  },
+  {
+    title: "Book Distribution",
+    tag: "Ongoing · Nationwide",
+    desc: "Values-based books placed into the hands of students, teachers and families — building home and school libraries of character.",
+    img: "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=1400&q=80",
+    alt: "A stack of open books",
+  },
+  {
+    title: "Youth Ambassador Programme",
+    tag: "Ongoing · Cohort-based",
+    desc: "A leadership pipeline of young people trained to model and multiply values in their schools and communities.",
+    img: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1400&q=80",
+    alt: "Young people collaborating on a project",
+  },
+  {
+    title: "Digital Skills Training",
+    tag: "Ongoing · Ambassadors",
+    desc: "Practical digital skills for young ambassadors — pairing competence with character for purposeful, productive futures.",
+    img: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1400&q=80",
+    alt: "Young women learning on laptops",
+  },
+];
+
+const POSTS = [
   {
     slug: "why-character-is-the-first-curriculum",
     title: "Why Character Is the First Curriculum",
     category: "Values Education",
-    date: "June 12, 2026",
     excerpt:
       "Before mathematics and before grammar, a child learns who to be. What happens when schools treat character as core — not extracurricular?",
     img: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1200&q=80",
@@ -29,7 +109,6 @@ export const POSTS: Post[] = [
     slug: "raising-honest-children-in-a-noisy-world",
     title: "Raising Honest Children in a Noisy World",
     category: "Parenting",
-    date: "May 28, 2026",
     excerpt:
       "Children don't learn honesty from definitions. They learn it from watching what we do when honesty is expensive.",
     img: "https://images.unsplash.com/photo-1476703993599-0035a21b17a9?auto=format&fit=crop&w=1200&q=80",
@@ -44,7 +123,6 @@ export const POSTS: Post[] = [
     slug: "the-discipline-dividend",
     title: "The Discipline Dividend",
     category: "Character",
-    date: "May 9, 2026",
     excerpt:
       "Talent opens doors; discipline keeps them open. What our essay competition taught us about the students who finish.",
     img: "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1200&q=80",
@@ -59,7 +137,6 @@ export const POSTS: Post[] = [
     slug: "mentorship-that-outlives-the-mentor",
     title: "Mentorship That Outlives the Mentor",
     category: "Youth Mentorship",
-    date: "April 17, 2026",
     excerpt:
       "The goal of mentorship is not dependence — it is multiplication. Inside our youth ambassador programme.",
     img: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80",
@@ -74,7 +151,6 @@ export const POSTS: Post[] = [
     slug: "values-and-the-future-of-nigerian-leadership",
     title: "Values and the Future of Nigerian Leadership",
     category: "Leadership",
-    date: "March 30, 2026",
     excerpt:
       "Policies fail where character fails. Why we consult with institutions on ethics — and what changes when we do.",
     img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1200&q=80",
@@ -89,7 +165,6 @@ export const POSTS: Post[] = [
     slug: "empathy-is-a-skill-we-can-teach",
     title: "Empathy Is a Skill We Can Teach",
     category: "Values Education",
-    date: "March 8, 2026",
     excerpt:
       "We treat empathy as a temperament some children have. Our school tours suggest something more hopeful.",
     img: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=1200&q=80",
@@ -101,3 +176,57 @@ export const POSTS: Post[] = [
     ],
   },
 ];
+
+async function main() {
+  const email = process.env.ADMIN_EMAIL;
+  const password = process.env.ADMIN_PASSWORD;
+  const name = process.env.ADMIN_NAME || "Admin";
+
+  if (!email || !password) {
+    throw new Error("Set ADMIN_EMAIL and ADMIN_PASSWORD in .env before seeding.");
+  }
+
+  const passwordHash = await bcrypt.hash(password, 12);
+  await prisma.adminUser.upsert({
+    where: { email },
+    update: {},
+    create: { email, passwordHash, name },
+  });
+  console.log(`Admin user ready: ${email}`);
+
+  for (const [i, e] of EVENTS.entries()) {
+    await prisma.event.upsert({
+      where: { id: `seed-event-${i}` },
+      update: {},
+      create: { id: `seed-event-${i}`, ...e },
+    });
+  }
+  console.log(`Seeded ${EVENTS.length} events`);
+
+  for (const [i, p] of PROJECTS.entries()) {
+    await prisma.project.upsert({
+      where: { id: `seed-project-${i}` },
+      update: {},
+      create: { id: `seed-project-${i}`, order: i, ...p },
+    });
+  }
+  console.log(`Seeded ${PROJECTS.length} projects`);
+
+  for (const p of POSTS) {
+    await prisma.post.upsert({
+      where: { slug: p.slug },
+      update: {},
+      create: { ...p, body: p.body.join("\n\n") },
+    });
+  }
+  console.log(`Seeded ${POSTS.length} blog posts`);
+}
+
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exitCode = 1;
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

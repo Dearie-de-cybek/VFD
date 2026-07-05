@@ -5,7 +5,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ScrollFx from "@/components/ScrollFx";
 import PageHero from "@/components/PageHero";
-import { POSTS } from "@/lib/posts";
+import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
   title: "Blog — Values for Daily Living",
@@ -13,8 +13,36 @@ export const metadata: Metadata = {
     "Essays and reflections on values, character, parenting, mentorship and leadership from the Values for Daily Living movement.",
 };
 
-export default function BlogsPage() {
-  const [featured, ...rest] = POSTS;
+export default async function BlogsPage() {
+  const posts = await prisma.post.findMany({
+    where: { published: true },
+    orderBy: { createdAt: "asc" },
+  });
+  if (posts.length === 0) {
+    return (
+      <main>
+        <Nav />
+        <PageHero
+          crumb="Blogs"
+          title={
+            <>
+              Ideas that <em className="text-gold-soft">form character</em>
+            </>
+          }
+          intro="Essays and reflections on values, parenting, mentorship and leadership — written from the field."
+        />
+        <section className="bg-paper py-28 text-center text-ink/60">
+          No blog posts published yet.
+        </section>
+        <Footer />
+        <ScrollFx />
+      </main>
+    );
+  }
+
+  const [featured, ...rest] = posts;
+  const formatDate = (d: Date) =>
+    d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
 
   return (
     <main>
@@ -51,7 +79,7 @@ export default function BlogsPage() {
                 <span className="rounded-full bg-gold/20 px-3 py-1 text-forest">
                   {featured.category}
                 </span>
-                {featured.date}
+                {formatDate(featured.createdAt)}
               </p>
               <h2 className="mt-5 font-display text-3xl leading-tight tracking-tight transition-colors group-hover:text-forest lg:text-4xl">
                 {featured.title}
@@ -88,7 +116,7 @@ export default function BlogsPage() {
                   <span className="rounded-full bg-gold/20 px-3 py-1 text-forest">
                     {post.category}
                   </span>
-                  {post.date}
+                  {formatDate(post.createdAt)}
                 </p>
                 <h2 className="mt-3 font-display text-2xl leading-snug tracking-tight transition-colors group-hover:text-forest">
                   {post.title}

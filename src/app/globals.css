@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* class-based dark mode, scoped to subtrees carrying `.dark` (used by the admin dashboard only) */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-paper: #f6f2e8;
   --color-paper-deep: #efe8d8;

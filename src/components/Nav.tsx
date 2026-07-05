@@ -155,12 +155,12 @@ export default function Nav() {
               </span>
             </Link>
 
-            <ul className="hidden items-center gap-2 lg:flex">
+            <ul className="hidden items-center gap-1 xl:flex xl:gap-2">
               {LINKS.map((l) => (
                 <li key={l.href}>
                   <Link
                     href={l.href}
-                    className={`inline-block px-3 py-3 text-[13px] font-medium tracking-wide transition-colors xl:px-4 xl:text-sm ${
+                    className={`inline-block whitespace-nowrap px-2.5 py-3 text-[13px] font-medium tracking-wide transition-colors xl:px-4 xl:text-sm ${
                       scrolled
                         ? "text-ink/80 hover:text-forest"
                         : "text-cream/90 hover:text-gold-soft"
@@ -187,7 +187,7 @@ export default function Nav() {
                 onClick={() => setOpen(!open)}
                 aria-label={open ? "Close menu" : "Open menu"}
                 aria-expanded={open}
-                className={`relative z-[70] flex h-11 w-11 flex-col items-center justify-center gap-1.5 rounded-full border lg:hidden ${
+                className={`relative z-[70] flex h-11 w-11 flex-col items-center justify-center gap-1.5 rounded-full border xl:hidden ${
                   scrolled ? "border-ink/15" : "border-cream/40"
                 }`}
               >

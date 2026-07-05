@@ -5,18 +5,16 @@ import { notFound } from "next/navigation";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ScrollFx from "@/components/ScrollFx";
-import { POSTS } from "@/lib/posts";
+import { prisma } from "@/lib/prisma";
 import { IconSparkle } from "@/components/icons";
 
 type Props = { params: Promise<{ slug: string }> };
 
-export function generateStaticParams() {
-  return POSTS.map((p) => ({ slug: p.slug }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = POSTS.find((p) => p.slug === slug);
+  const post = await prisma.post.findUnique({ where: { slug } });
   if (!post) return { title: "Article — Values for Daily Living" };
   return {
     title: `${post.title} — Values for Daily Living`,
@@ -26,10 +24,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
-  const post = POSTS.find((p) => p.slug === slug);
-  if (!post) notFound();
+  const post = await prisma.post.findUnique({ where: { slug } });
+  if (!post || !post.published) notFound();
 
-  const others = POSTS.filter((p) => p.slug !== slug).slice(0, 2);
+  const others = await prisma.post.findMany({
+    where: { published: true, slug: { not: slug } },
+    orderBy: { createdAt: "asc" },
+    take: 2,
+  });
+  const body = post.body.split("\n\n");
+  const formatDate = (d: Date) =>
+    d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
 
   return (
     <main>
@@ -58,7 +63,7 @@ export default async function BlogPostPage({ params }: Props) {
             </nav>
             <p className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-gold-soft">
               {post.category} <span className="text-cream/40">·</span>{" "}
-              <span className="text-cream/60">{post.date}</span>
+              <span className="text-cream/60">{formatDate(post.createdAt)}</span>
             </p>
             <h1 className="mt-5 font-display text-[clamp(2.2rem,5.5vw,4.2rem)] font-medium leading-[1.05] tracking-tight">
               {post.title}
@@ -80,7 +85,7 @@ export default async function BlogPostPage({ params }: Props) {
             </div>
 
             <div className="mx-auto mt-10 max-w-2xl space-y-7 text-lg leading-relaxed text-ink/80 lg:mt-4">
-              {post.body.map((para, i) => (
+              {body.map((para, i) => (
                 <p
                   key={i}
                   data-reveal

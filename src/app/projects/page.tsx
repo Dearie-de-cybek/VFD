@@ -5,6 +5,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ScrollFx from "@/components/ScrollFx";
 import PageHero from "@/components/PageHero";
+import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
   title: "Our Projects — Values for Daily Living",
@@ -12,52 +13,14 @@ export const metadata: Metadata = {
     "School values tours, the annual VDL conference, essay competitions, book distribution, youth ambassadors and digital skills training.",
 };
 
-const PROJECTS = [
-  {
-    title: "School Values Tours",
-    tag: "Ongoing · Nationwide",
-    desc: "Moral education campaigns that bring values teaching directly into classrooms — assemblies, workshops and teacher resources delivered school by school.",
-    img: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1400&q=80",
-    alt: "A school classroom",
-  },
-  {
-    title: "Annual VDL Conference",
-    tag: "Yearly · Enugu",
-    desc: "Educators, parents, students and leaders gather each year to advance the national conversation on values, character and purposeful leadership.",
-    img: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1400&q=80",
-    alt: "An audience at a conference",
-  },
-  {
-    title: "Essay Competitions",
-    tag: "Yearly · Secondary Schools",
-    desc: "Students reflect deeply on character and citizenship through structured writing — with scholarships and prizes for the most thoughtful voices.",
-    img: "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1400&q=80",
-    alt: "A student writing with a fountain pen",
-  },
-  {
-    title: "Book Distribution",
-    tag: "Ongoing · Nationwide",
-    desc: "Values-based books placed into the hands of students, teachers and families — building home and school libraries of character.",
-    img: "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=1400&q=80",
-    alt: "A stack of open books",
-  },
-  {
-    title: "Youth Ambassador Programme",
-    tag: "Ongoing · Cohort-based",
-    desc: "A leadership pipeline of young people trained to model and multiply values in their schools and communities.",
-    img: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1400&q=80",
-    alt: "Young people collaborating on a project",
-  },
-  {
-    title: "Digital Skills Training",
-    tag: "Ongoing · Ambassadors",
-    desc: "Practical digital skills for young ambassadors — pairing competence with character for purposeful, productive futures.",
-    img: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1400&q=80",
-    alt: "Young women learning on laptops",
-  },
-];
+export const dynamic = "force-dynamic";
 
-export default function ProjectsPage() {
+export default async function ProjectsPage() {
+  const PROJECTS = await prisma.project.findMany({
+    where: { published: true },
+    orderBy: { order: "asc" },
+  });
+
   return (
     <main>
       <Nav />
@@ -76,7 +39,7 @@ export default function ProjectsPage() {
           <div className="grid gap-10 md:grid-cols-2">
             {PROJECTS.map((p, i) => (
               <article
-                key={p.title}
+                key={p.id}
                 data-reveal
                 className={`group ${i % 2 === 1 ? "md:mt-16" : ""}`}
               >

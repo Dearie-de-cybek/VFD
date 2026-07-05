@@ -4,6 +4,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ScrollFx from "@/components/ScrollFx";
 import PageHero from "@/components/PageHero";
+import { prisma } from "@/lib/prisma";
 import { IconCalendar, IconPin, IconMic, IconUsers } from "@/components/icons";
 
 export const metadata: Metadata = {
@@ -12,52 +13,21 @@ export const metadata: Metadata = {
     "Upcoming VDL conferences, inter-school values debates, community gatherings and workshops across Nigeria.",
 };
 
-const CATEGORY_ICON = {
+export const dynamic = "force-dynamic";
+
+const CATEGORY_ICON: Record<string, typeof IconUsers> = {
   Conference: IconUsers,
   Debate: IconMic,
   Gathering: IconUsers,
   Workshop: IconCalendar,
-} as const;
+};
 
-const EVENTS = [
-  {
-    title: "The Annual Values for Daily Living Conference",
-    category: "Conference" as const,
-    date: "18–19 September 2026",
-    location: "Enugu, Nigeria",
-    desc: "Educators, parents, students and leaders gather for keynote sessions, essay competition awards and the commissioning of new youth ambassadors.",
-  },
-  {
-    title: "Inter-School Values Debate Championship",
-    category: "Debate" as const,
-    date: "7 August 2026",
-    location: "Zonal heats — Enugu, Onitsha, Aba",
-    desc: "Secondary school teams argue live on integrity, honesty and civic responsibility, judged by educators and community leaders. Winners advance to the national final at the Annual Conference.",
-  },
-  {
-    title: "Community Values Gathering",
-    category: "Gathering" as const,
-    date: "Last Saturday, monthly",
-    location: "Rotates across partner communities",
-    desc: "An open town-hall for parents, faith leaders and residents to discuss character formation in the home and neighbourhood — informal, conversational, always free to attend.",
-  },
-  {
-    title: "Parents & Teachers Values Workshop",
-    category: "Workshop" as const,
-    date: "Ongoing — book a date",
-    location: "On-site at your school or church",
-    desc: "A half-day, hands-on session equipping the adults around a child with practical language and tools for values-driven correction and encouragement.",
-  },
-  {
-    title: "Youth Ambassadors Induction Ceremony",
-    category: "Gathering" as const,
-    date: "October 2026",
-    location: "Enugu, Nigeria",
-    desc: "Each new cohort of Youth Ambassadors is publicly commissioned — a short, ceremonial gathering for ambassadors, their families and mentors.",
-  },
-];
+export default async function EventsPage() {
+  const EVENTS = await prisma.event.findMany({
+    where: { published: true },
+    orderBy: { createdAt: "asc" },
+  });
 
-export default function EventsPage() {
   return (
     <main>
       <Nav />
@@ -78,7 +48,7 @@ export default function EventsPage() {
               const Icon = CATEGORY_ICON[e.category];
               return (
                 <li
-                  key={e.title}
+                  key={e.id}
                   data-reveal
                   className="rounded-2xl border border-ink/10 bg-white p-7 lg:p-9"
                 >
