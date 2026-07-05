@@ -1,5 +1,5 @@
 import "server-only";
-import { mkdir, writeFile } from "fs/promises";
+import { mkdir, writeFile, unlink } from "fs/promises";
 import path from "path";
 import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
@@ -44,4 +44,15 @@ export async function saveUploadedImage(file: File): Promise<string> {
   await prisma.media.create({ data: { path: publicPath, filename } });
 
   return publicPath;
+}
+
+/** Removes a previously uploaded image from /public/uploads. Safe to call even if the file is already gone. */
+export async function deleteUploadedImage(publicPath: string): Promise<void> {
+  if (!publicPath.startsWith("/uploads/")) return;
+  const filePath = path.join(process.cwd(), "public", publicPath);
+  try {
+    await unlink(filePath);
+  } catch {
+    // already deleted or never existed on disk — nothing to do
+  }
 }

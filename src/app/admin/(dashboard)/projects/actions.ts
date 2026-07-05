@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/session";
-import { saveUploadedImage } from "@/lib/upload";
+import { saveUploadedImage, deleteUploadedImage } from "@/lib/upload";
 
 const ProjectSchema = z.object({
   title: z.string().trim().min(2, "Title is required."),
@@ -80,8 +80,70 @@ export async function updateProject(
 export async function deleteProject(formData: FormData) {
   await requireAdmin();
   const id = String(formData.get("id"));
+  const photos = await prisma.projectPhoto.findMany({ where: { projectId: id } });
   await prisma.project.delete({ where: { id } });
+  await Promise.all(photos.map((p) => deleteUploadedImage(p.path)));
 
+  revalidatePath("/admin/projects");
+  revalidatePath("/projects");
+}
+
+export type PhotoFormState = { error?: string };
+
+export async function addProjectPhotos(
+  projectId: string,
+  _prevState: PhotoFormState,
+  formData: FormData
+): Promise<PhotoFormState> {
+  await requireAdmin();
+  const project = await prisma.project.findUnique({ where: { id: projectId } });
+  if (!project) return { error: "Project not found." };
+
+  const files = formData.getAll("photos").filter((f): f is File => f instanceof File && f.size > 0);
+  if (files.length === 0) return { error: "Choose at least one photo." };
+
+  const count = await prisma.projectPhoto.count({ where: { projectId } });
+
+  try {
+    for (const [i, file] of files.entries()) {
+      const savedPath = await saveUploadedImage(file);
+      await prisma.projectPhoto.create({
+        data: {
+          projectId,
+          path: savedPath,
+          alt: project.title,
+          order: count + i,
+        },
+      });
+    }
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : "Upload failed." };
+  }
+
+  revalidatePath(`/admin/projects/${projectId}`);
+  return {};
+}
+
+export async function deleteProjectPhoto(formData: FormData) {
+  await requireAdmin();
+  const id = String(formData.get("id"));
+  const projectId = String(formData.get("projectId"));
+
+  const photo = await prisma.projectPhoto.delete({ where: { id } });
+  await deleteUploadedImage(photo.path);
+
+  revalidatePath(`/admin/projects/${projectId}`);
+}
+
+export async function setCoverPhoto(formData: FormData) {
+  await requireAdmin();
+  const projectId = String(formData.get("projectId"));
+  const path = String(formData.get("path"));
+  const alt = String(formData.get("alt"));
+
+  await prisma.project.update({ where: { id: projectId }, data: { img: path, alt } });
+
+  revalidatePath(`/admin/projects/${projectId}`);
   revalidatePath("/admin/projects");
   revalidatePath("/projects");
 }
