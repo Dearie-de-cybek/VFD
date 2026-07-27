@@ -12,6 +12,7 @@ export type FolderRow = {
   image?: string;
   photoCount: number;
   published: boolean;
+  featured?: boolean;
   updatedAt: string;
 };
 
@@ -109,15 +110,22 @@ export default function FolderGrid({
                 <span className="text-[#6B7280]">
                   {row.photoCount} {row.photoCount === 1 ? "photo" : "photos"}
                 </span>
-                <span
-                  className={`rounded-full px-2.5 py-1 font-semibold ${
-                    row.published
-                      ? "bg-[#DCFCE7] text-[#16A34A]"
-                      : "bg-[#F3F4F6] text-[#6B7280]"
-                  }`}
-                >
-                  {row.published ? "Published" : "Draft"}
-                </span>
+                <div className="flex items-center gap-1.5">
+                  {row.featured && (
+                    <span className="rounded-full bg-[#FEF3C7] px-2.5 py-1 font-semibold text-[#B45309]">
+                      Featured
+                    </span>
+                  )}
+                  <span
+                    className={`rounded-full px-2.5 py-1 font-semibold ${
+                      row.published
+                        ? "bg-[#DCFCE7] text-[#16A34A]"
+                        : "bg-[#F3F4F6] text-[#6B7280]"
+                    }`}
+                  >
+                    {row.published ? "Published" : "Draft"}
+                  </span>
+                </div>
               </div>
             </div>
           ))}

@@ -82,8 +82,21 @@ export default async function EventDetailPage({ params }: Props) {
         </header>
 
         <div className="bg-paper pb-24 lg:pb-32">
-          <div className="mx-auto max-w-4xl px-6 pt-16 md:px-12">
-            <div className="mx-auto max-w-2xl text-lg leading-relaxed text-ink/80">
+          <div className="mx-auto max-w-4xl px-6 md:px-12">
+            {event.img && (
+              <div className="relative -mt-0 aspect-[16/9] overflow-hidden rounded-2xl lg:-translate-y-10">
+                <Image
+                  src={event.img}
+                  alt={event.alt || event.title}
+                  fill
+                  priority
+                  sizes="(min-width: 1024px) 56rem, 100vw"
+                  className="object-cover"
+                />
+              </div>
+            )}
+
+            <div className={`mx-auto max-w-2xl text-lg leading-relaxed text-ink/80 ${event.img ? "mt-10 lg:mt-4" : "pt-16"}`}>
               <p data-reveal>{event.desc}</p>
               <Link
                 href="/contact"

@@ -101,3 +101,50 @@ export function IconUsers({ className, style }: IconProps) {
     </svg>
   );
 }
+
+export function IconEye({ className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} style={style} fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}
+
+export function IconEyeOff({ className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} style={style} fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M3 3l18 18" />
+      <path d="M10.6 5.2A10.7 10.7 0 0 1 12 5c6.4 0 10 7 10 7a15.5 15.5 0 0 1-3.4 4.3M6.6 6.6C4 8.3 2 12 2 12s3.6 7 10 7c1.4 0 2.6-.3 3.7-.8" />
+      <path d="M9.9 10a3 3 0 0 0 4.2 4.2" />
+    </svg>
+  );
+}
+
+export function IconMail({ className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} style={style} fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <rect x="3" y="5" width="18" height="14" rx="2.5" />
+      <path d="M3.5 6.5l8.5 6.5 8.5-6.5" />
+    </svg>
+  );
+}
+
+export function IconLock({ className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} style={style} fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <rect x="4.5" y="10.5" width="15" height="10" rx="2.2" />
+      <path d="M7.5 10.5V7.5a4.5 4.5 0 0 1 9 0v3" />
+    </svg>
+  );
+}
+
+export function IconAlert({ className, style }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} style={style} fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M12 3.5L2.5 20h19L12 3.5z" />
+      <path d="M12 10v4.5" />
+      <circle cx="12" cy="17.3" r="0.15" fill="currentColor" />
+    </svg>
+  );
+}

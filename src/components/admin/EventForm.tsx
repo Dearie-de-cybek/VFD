@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import Link from "next/link";
 import { inputClass, textareaClass, labelClass } from "./form-styles";
+import ImageUploadField from "./ImageUploadField";
 import type { EventFormState } from "@/app/admin/(dashboard)/events/actions";
 
 const CATEGORIES = ["Conference", "Debate", "Gathering", "Workshop"] as const;
@@ -20,7 +21,10 @@ export default function EventForm({
     date: string;
     location: string;
     desc: string;
+    img?: string | null;
+    alt?: string | null;
     published: boolean;
+    featured: boolean;
   };
 }) {
   const [state, formAction, pending] = useActionState(action, initialState);
@@ -103,6 +107,21 @@ export default function EventForm({
         />
       </div>
 
+      <ImageUploadField name="image" label="Thumbnail" defaultImage={defaultValues?.img ?? undefined} />
+
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="alt" className={labelClass}>
+          Image alt text
+        </label>
+        <input
+          id="alt"
+          name="alt"
+          defaultValue={defaultValues?.alt ?? undefined}
+          placeholder="Educators and students at the annual conference"
+          className={inputClass}
+        />
+      </div>
+
       <label className="flex items-center gap-2.5 text-sm text-[#374151] dark:text-white/80">
         <input
           type="checkbox"
@@ -111,6 +130,17 @@ export default function EventForm({
           className="h-4 w-4 rounded border-[#E5E7EB] text-[#22C55E] focus:ring-[#22C55E]"
         />
         Published (visible on the public site)
+      </label>
+
+      <label className="flex items-center gap-2.5 text-sm text-[#374151] dark:text-white/80">
+        <input
+          type="checkbox"
+          name="featured"
+          defaultChecked={defaultValues?.featured ?? false}
+          className="h-4 w-4 rounded border-[#E5E7EB] text-[#22C55E] focus:ring-[#22C55E]"
+        />
+        Featured on homepage
+        <span className="text-xs font-normal text-[#6B7280]">(max 2 at a time)</span>
       </label>
 
       {state.error && (

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import TreeLogo from "@/components/TreeLogo";
+import { IconSparkle } from "@/components/icons";
 import LoginForm from "./LoginForm";
 
 export const metadata: Metadata = {
@@ -14,21 +15,61 @@ export default async function AdminLoginPage({
   const { next } = await searchParams;
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#F8FAF8] px-6">
-      <div className="w-full max-w-[380px] rounded-2xl border border-[#E5E7EB] bg-white p-8 shadow-[0_1px_3px_rgba(0,0,0,.05)]">
-        <div className="flex items-center gap-2.5">
-          <TreeLogo className="h-8 w-7 text-[#22C55E]" idPrefix="admin-login" />
-          <span className="text-[15px] font-semibold text-[#111827]">
-            VDL Admin
+    <div className="grid min-h-screen lg:grid-cols-2">
+      {/* brand panel */}
+      <div className="relative hidden overflow-hidden bg-forest-deep px-14 py-12 text-cream lg:flex lg:flex-col lg:justify-between">
+        <TreeLogo
+          idPrefix="admin-login-bg"
+          className="pointer-events-none absolute -right-24 -top-16 h-[34rem] w-auto text-gold opacity-[0.07]"
+        />
+
+        <div className="relative flex items-center gap-3">
+          <TreeLogo className="h-9 w-8 text-gold" idPrefix="admin-login" />
+          <span className="font-display text-lg leading-none tracking-tight">
+            Values for
+            <br />
+            Daily Living
           </span>
         </div>
-        <h1 className="mt-6 text-xl font-bold text-[#111827]">Welcome back</h1>
-        <p className="mt-1 text-sm text-[#6B7280]">
-          Sign in to manage events, blogs and projects.
-        </p>
 
-        <div className="mt-6">
-          <LoginForm next={next || "/admin"} />
+        <div className="relative max-w-md">
+          <IconSparkle className="h-6 w-6 text-gold" />
+          <p className="mt-6 font-display text-3xl leading-[1.2] tracking-tight">
+            Character is the seed. Society is the harvest.
+          </p>
+          <p className="mt-5 text-sm leading-relaxed text-cream/60">
+            Manage the projects, events and stories that carry the VDL
+            mission — every change here goes live on the site instantly.
+          </p>
+        </div>
+
+        <p className="relative text-xs uppercase tracking-[0.25em] text-cream/40">
+          Admin Dashboard
+        </p>
+      </div>
+
+      {/* form panel */}
+      <div className="flex items-center justify-center bg-paper px-6 py-16">
+        <div className="w-full max-w-[400px]">
+          <div className="mb-8 flex items-center gap-2.5 lg:hidden">
+            <TreeLogo className="h-8 w-7 text-forest" idPrefix="admin-login-mobile" />
+            <span className="font-display text-base leading-none tracking-tight text-ink">
+              Values for
+              <br />
+              Daily Living
+            </span>
+          </div>
+
+          <h1 className="font-display text-3xl tracking-tight text-ink">
+            Welcome back
+          </h1>
+          <p className="mt-2 text-sm leading-relaxed text-ink/55">
+            Sign in to manage events, blogs and projects.
+          </p>
+
+          <div className="mt-8">
+            <LoginForm next={next || "/admin"} />
+          </div>
         </div>
       </div>
     </div>

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
@@ -50,45 +51,79 @@ export default async function EventsPage() {
                 <li
                   key={e.id}
                   data-reveal
-                  className="rounded-2xl border border-ink/10 bg-white p-7 lg:p-9"
+                  className="overflow-hidden rounded-2xl border border-ink/10 bg-white"
                 >
-                  <div className="flex flex-wrap items-start justify-between gap-4">
-                    <span className="inline-flex items-center gap-2 rounded-full bg-forest/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-forest">
-                      <Icon className="h-3.5 w-3.5" />
-                      {e.category}
-                    </span>
+                  <div className="flex flex-col sm:flex-row">
+                    {e.img && (
+                      <Link
+                        href={`/events/${e.id}`}
+                        className="relative aspect-[16/9] shrink-0 overflow-hidden sm:aspect-auto sm:w-64"
+                      >
+                        <Image
+                          src={e.img}
+                          alt={e.alt || e.title}
+                          fill
+                          sizes="(min-width: 640px) 16rem, 100vw"
+                          className="object-cover"
+                        />
+                      </Link>
+                    )}
+
+                    <div className="flex-1 p-7 lg:p-9">
+                      <div className="flex flex-wrap items-start justify-between gap-4">
+                        <span className="inline-flex items-center gap-2 rounded-full bg-forest/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-forest">
+                          <Icon className="h-3.5 w-3.5" />
+                          {e.category}
+                        </span>
+                      </div>
+
+                      <Link href={`/events/${e.id}`} className="group">
+                        <h2 className="mt-4 font-display text-2xl tracking-tight transition-colors group-hover:text-forest lg:text-3xl">
+                          {e.title}
+                        </h2>
+                      </Link>
+
+                      <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1.5 text-sm text-ink/60">
+                        <span className="inline-flex items-center gap-1.5">
+                          <IconCalendar className="h-4 w-4 text-gold" />
+                          {e.date}
+                        </span>
+                        <span className="inline-flex items-center gap-1.5">
+                          <IconPin className="h-4 w-4 text-gold" />
+                          {e.location}
+                        </span>
+                      </div>
+
+                      <p className="mt-4 max-w-2xl leading-relaxed text-ink/70">
+                        {e.desc}
+                      </p>
+
+                      <div className="mt-6 flex flex-wrap items-center gap-6">
+                        <Link
+                          href={`/events/${e.id}`}
+                          className="group inline-flex items-center gap-3"
+                        >
+                          <span className="flex h-9 w-9 items-center justify-center rounded-md bg-forest/10 text-forest transition-transform group-hover:translate-x-1">
+                            →
+                          </span>
+                          <span className="text-sm font-semibold tracking-wide">
+                            View event
+                          </span>
+                        </Link>
+                        <Link
+                          href="/contact"
+                          className="group inline-flex items-center gap-3"
+                        >
+                          <span className="flex h-9 w-9 items-center justify-center rounded-md bg-gold text-forest-deep transition-transform group-hover:translate-x-1">
+                            →
+                          </span>
+                          <span className="text-sm font-semibold tracking-wide">
+                            Register your interest
+                          </span>
+                        </Link>
+                      </div>
+                    </div>
                   </div>
-
-                  <h2 className="mt-4 font-display text-2xl tracking-tight lg:text-3xl">
-                    {e.title}
-                  </h2>
-
-                  <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1.5 text-sm text-ink/60">
-                    <span className="inline-flex items-center gap-1.5">
-                      <IconCalendar className="h-4 w-4 text-gold" />
-                      {e.date}
-                    </span>
-                    <span className="inline-flex items-center gap-1.5">
-                      <IconPin className="h-4 w-4 text-gold" />
-                      {e.location}
-                    </span>
-                  </div>
-
-                  <p className="mt-4 max-w-2xl leading-relaxed text-ink/70">
-                    {e.desc}
-                  </p>
-
-                  <Link
-                    href="/contact"
-                    className="group mt-6 inline-flex items-center gap-3"
-                  >
-                    <span className="flex h-9 w-9 items-center justify-center rounded-md bg-gold text-forest-deep transition-transform group-hover:translate-x-1">
-                      →
-                    </span>
-                    <span className="text-sm font-semibold tracking-wide">
-                      Register your interest
-                    </span>
-                  </Link>
                 </li>
               );
             })}

@@ -74,6 +74,7 @@ export async function updateProject(
 
   revalidatePath("/admin/projects");
   revalidatePath("/projects");
+  revalidatePath(`/projects/${id}`);
   redirect("/admin/projects");
 }
 
@@ -86,6 +87,7 @@ export async function deleteProject(formData: FormData) {
 
   revalidatePath("/admin/projects");
   revalidatePath("/projects");
+  revalidatePath(`/projects/${id}`);
 }
 
 export type PhotoFormState = { error?: string };
@@ -121,6 +123,7 @@ export async function addProjectPhotos(
   }
 
   revalidatePath(`/admin/projects/${projectId}`);
+  revalidatePath(`/projects/${projectId}`);
   return {};
 }
 
@@ -133,6 +136,7 @@ export async function deleteProjectPhoto(formData: FormData) {
   await deleteUploadedImage(photo.path);
 
   revalidatePath(`/admin/projects/${projectId}`);
+  revalidatePath(`/projects/${projectId}`);
 }
 
 export async function setCoverPhoto(formData: FormData) {
@@ -146,4 +150,5 @@ export async function setCoverPhoto(formData: FormData) {
   revalidatePath(`/admin/projects/${projectId}`);
   revalidatePath("/admin/projects");
   revalidatePath("/projects");
+  revalidatePath(`/projects/${projectId}`);
 }

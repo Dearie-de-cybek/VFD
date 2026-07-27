@@ -14,8 +14,10 @@ export default async function AdminEventsPage() {
     id: e.id,
     title: e.title,
     subtitle: `${e.category} · ${e.date}`,
+    image: e.img ?? undefined,
     photoCount: e._count.photos,
     published: e.published,
+    featured: e.featured,
     updatedAt: e.updatedAt.toLocaleDateString("en-GB", {
       day: "numeric",
       month: "short",

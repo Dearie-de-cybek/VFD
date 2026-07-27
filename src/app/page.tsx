@@ -12,6 +12,8 @@ import GetInvolved from "@/components/GetInvolved";
 import Footer from "@/components/Footer";
 import ScrollFx from "@/components/ScrollFx";
 
+export const dynamic = "force-dynamic";
+
 export default function Home() {
   return (
     <main>
