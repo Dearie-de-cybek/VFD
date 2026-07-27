@@ -8,28 +8,50 @@ datasource db {
 }
 
 model AdminUser {
-  id           String   @id @default(cuid())
-  email        String   @unique
-  passwordHash String
-  name         String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id                String             @id @default(cuid())
+  email             String             @unique
+  passwordHash      String
+  name              String
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  pushSubscriptions PushSubscription[]
+}
+
+model PushSubscription {
+  id        String    @id @default(cuid())
+  adminId   String
+  admin     AdminUser @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  endpoint  String    @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime  @default(now())
 }
 
 model Event {
-  id        String       @id @default(cuid())
-  title     String
-  category  String
-  date      String
-  location  String
-  desc      String
-  img       String?
-  alt       String?
-  featured  Boolean      @default(false)
-  published Boolean      @default(true)
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  photos    EventPhoto[]
+  id            String              @id @default(cuid())
+  title         String
+  category      String
+  date          String
+  location      String
+  desc          String
+  img           String?
+  alt           String?
+  featured      Boolean             @default(false)
+  published     Boolean             @default(true)
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  photos        EventPhoto[]
+  registrations EventRegistration[]
+}
+
+model EventRegistration {
+  id        String   @id @default(cuid())
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  name      String
+  email     String
+  phone     String?
+  createdAt DateTime @default(now())
 }
 
 model EventPhoto {

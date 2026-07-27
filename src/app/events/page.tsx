@@ -111,7 +111,7 @@ export default async function EventsPage() {
                           </span>
                         </Link>
                         <Link
-                          href="/contact"
+                          href={`/events/${e.id}#register`}
                           className="group inline-flex items-center gap-3"
                         >
                           <span className="flex h-9 w-9 items-center justify-center rounded-md bg-gold text-forest-deep transition-transform group-hover:translate-x-1">

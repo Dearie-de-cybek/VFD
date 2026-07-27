@@ -11,6 +11,7 @@ export type FolderRow = {
   subtitle: string;
   image?: string;
   photoCount: number;
+  registrationCount?: number;
   published: boolean;
   featured?: boolean;
   updatedAt: string;
@@ -109,6 +110,8 @@ export default function FolderGrid({
               <div className="mt-4 flex items-center justify-between text-xs">
                 <span className="text-[#6B7280]">
                   {row.photoCount} {row.photoCount === 1 ? "photo" : "photos"}
+                  {row.registrationCount !== undefined &&
+                    ` · ${row.registrationCount} registered`}
                 </span>
                 <div className="flex items-center gap-1.5">
                   {row.featured && (

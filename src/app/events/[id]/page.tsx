@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import ScrollFx from "@/components/ScrollFx";
 import { prisma } from "@/lib/prisma";
 import { IconSparkle, IconCalendar, IconPin, IconMic, IconUsers } from "@/components/icons";
+import EventRegisterForm from "@/components/EventRegisterForm";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -98,17 +99,10 @@ export default async function EventDetailPage({ params }: Props) {
 
             <div className={`mx-auto max-w-2xl text-lg leading-relaxed text-ink/80 ${event.img ? "mt-10 lg:mt-4" : "pt-16"}`}>
               <p data-reveal>{event.desc}</p>
-              <Link
-                href="/contact"
-                className="group mt-8 inline-flex items-center gap-3"
-              >
-                <span className="flex h-9 w-9 items-center justify-center rounded-md bg-gold text-forest-deep transition-transform group-hover:translate-x-1">
-                  →
-                </span>
-                <span className="text-sm font-semibold tracking-wide">
-                  Register your interest
-                </span>
-              </Link>
+            </div>
+
+            <div className="mx-auto mt-12 max-w-2xl">
+              <EventRegisterForm eventId={event.id} />
             </div>
 
             {event.photos.length > 0 && (

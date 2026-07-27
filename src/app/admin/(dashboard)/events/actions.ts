@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/session";
 import { saveUploadedImage, deleteUploadedImage } from "@/lib/upload";
+import { sendEmail } from "@/lib/email";
 
 const EventSchema = z.object({
   title: z.string().trim().min(2, "Title is required."),
@@ -163,4 +164,59 @@ export async function deleteEventPhoto(formData: FormData) {
 
   revalidatePath(`/admin/events/${eventId}`);
   revalidatePath(`/events/${eventId}`);
+}
+
+const EventUpdateSchema = z.object({
+  subject: z.string().trim().min(1, "Subject is required."),
+  body: z.string().trim().min(1, "Message is required."),
+});
+
+export type EventUpdateState = { error?: string; success?: string };
+
+export async function sendEventUpdate(
+  eventId: string,
+  _prevState: EventUpdateState,
+  formData: FormData
+): Promise<EventUpdateState> {
+  await requireAdmin();
+  const parsed = EventUpdateSchema.safeParse({
+    subject: formData.get("subject"),
+    body: formData.get("body"),
+  });
+  if (!parsed.success) return { error: parsed.error.issues[0].message };
+
+  const event = await prisma.event.findUnique({ where: { id: eventId } });
+  if (!event) return { error: "Event not found." };
+
+  const registrations = await prisma.eventRegistration.findMany({ where: { eventId } });
+  if (registrations.length === 0) return { error: "No registrants to email yet." };
+
+  const results = await Promise.all(
+    registrations.map((r) => sendEmail(r.email, parsed.data.subject, parsed.data.body))
+  );
+  const sentCount = results.filter((r) => r.ok).length;
+  const failedCount = results.length - sentCount;
+
+  await prisma.campaign.create({
+    data: {
+      channel: "EMAIL",
+      audience: `Event: ${event.title}`,
+      subject: parsed.data.subject,
+      body: parsed.data.body,
+      sentCount,
+      failedCount,
+      status: sentCount > 0 ? "SENT" : "FAILED",
+      sentAt: new Date(),
+    },
+  });
+
+  if (sentCount === 0) {
+    const firstError = results.find((r) => !r.ok);
+    return { error: firstError && !firstError.ok ? firstError.error : "Send failed." };
+  }
+  return {
+    success: `Sent to ${sentCount} of ${registrations.length} registrant${registrations.length === 1 ? "" : "s"}${
+      failedCount > 0 ? ` (${failedCount} failed)` : ""
+    }.`,
+  };
 }

@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 export default async function AdminEventsPage() {
   const events = await prisma.event.findMany({
     orderBy: { updatedAt: "desc" },
-    include: { _count: { select: { photos: true } } },
+    include: { _count: { select: { photos: true, registrations: true } } },
   });
 
   const rows = events.map((e) => ({
@@ -16,6 +16,7 @@ export default async function AdminEventsPage() {
     subtitle: `${e.category} · ${e.date}`,
     image: e.img ?? undefined,
     photoCount: e._count.photos,
+    registrationCount: e._count.registrations,
     published: e.published,
     featured: e.featured,
     updatedAt: e.updatedAt.toLocaleDateString("en-GB", {

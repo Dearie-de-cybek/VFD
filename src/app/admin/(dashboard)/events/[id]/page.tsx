@@ -2,7 +2,8 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import EventForm from "@/components/admin/EventForm";
 import PhotoGallery from "@/components/admin/PhotoGallery";
-import { updateEvent, addEventPhotos, deleteEventPhoto } from "../actions";
+import EventRegistrations from "@/components/admin/EventRegistrations";
+import { updateEvent, addEventPhotos, deleteEventPhoto, sendEventUpdate } from "../actions";
 
 export default async function EditEventPage({
   params,
@@ -12,7 +13,10 @@ export default async function EditEventPage({
   const { id } = await params;
   const event = await prisma.event.findUnique({
     where: { id },
-    include: { photos: { orderBy: { order: "asc" } } },
+    include: {
+      photos: { orderBy: { order: "asc" } },
+      registrations: { orderBy: { createdAt: "desc" } },
+    },
   });
   if (!event) notFound();
 
@@ -26,6 +30,11 @@ export default async function EditEventPage({
         deleteAction={deleteEventPhoto}
         parentIdName="eventId"
         parentId={id}
+      />
+
+      <EventRegistrations
+        registrations={event.registrations}
+        sendAction={sendEventUpdate.bind(null, id)}
       />
     </div>
   );
