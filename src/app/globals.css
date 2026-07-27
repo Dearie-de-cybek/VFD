@@ -22,7 +22,7 @@
 
 :root {
   --nav-h: 5.5rem;
-  --topbar-h: 3.75rem;
+  --topbar-h: 4.25rem;
   --header-h: calc(var(--nav-h) + var(--topbar-h));
 }
 

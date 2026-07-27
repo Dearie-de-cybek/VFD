@@ -38,10 +38,11 @@ export default async function ProjectsPage() {
         <div className="mx-auto max-w-7xl px-6 md:px-12">
           <div className="grid gap-10 md:grid-cols-2">
             {PROJECTS.map((p, i) => (
-              <article
+              <Link
+                href={`/projects/${p.id}`}
                 key={p.id}
                 data-reveal
-                className={`group ${i % 2 === 1 ? "md:mt-16" : ""}`}
+                className={`group block ${i % 2 === 1 ? "md:mt-16" : ""}`}
               >
                 <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
                   <Image
@@ -57,7 +58,7 @@ export default async function ProjectsPage() {
                 </div>
                 <div className="flex items-start justify-between gap-6 pt-6">
                   <div>
-                    <h2 className="font-display text-2xl tracking-tight lg:text-3xl">
+                    <h2 className="font-display text-2xl tracking-tight transition-colors group-hover:text-forest lg:text-3xl">
                       {p.title}
                     </h2>
                     <p className="mt-3 max-w-md leading-relaxed text-ink/65">
@@ -68,7 +69,7 @@ export default async function ProjectsPage() {
                     0{i + 1}
                   </span>
                 </div>
-              </article>
+              </Link>
             ))}
           </div>
 
