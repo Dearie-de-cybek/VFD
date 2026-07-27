@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 import TreeLogo from "./TreeLogo";
 import { IconCheck } from "./icons";
+import { submitJoin } from "@/app/join/actions";
 
 const NIGERIAN_STATES = [
   "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue",
@@ -74,6 +75,7 @@ export default function JoinForm() {
   const [d, setD] = useState<Data>(INITIAL);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
+  const [pending, setPending] = useState(false);
 
   const set = (patch: Partial<Data>) => setD((v) => ({ ...v, ...patch }));
 
@@ -163,35 +165,21 @@ export default function JoinForm() {
     setStep((s) => s + dir);
   });
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const err = validate();
     if (err) {
       setError(err);
       return;
     }
-    const profile =
-      d.type === "Teenager"
-        ? `School: ${d.school}\nClass: ${d.klass}\nAge: ${d.age}`
-        : `Occupation: ${d.occupation}${d.orgName ? `\n${orgField(d.occupation)?.label}: ${d.orgName}` : ""}`;
-    const body = [
-      `New ${d.type.toLowerCase()} sign-up — volunteers & participants`,
-      ``,
-      `Name: ${d.name}`,
-      `Email: ${d.email}`,
-      `Phone: ${d.phone}`,
-      `Address: ${d.address}`,
-      `State of origin: ${d.state}`,
-      `Nationality: ${d.nationality}`,
-      profile,
-      `Wants activity updates: ${d.updates ? "Yes" : "No"}`,
-      ``,
-      `Comments for the VDL team:`,
-      d.comments || "—",
-    ].join("\n");
-    window.location.href = `mailto:hello@valuesfordailyliving.org?subject=${encodeURIComponent(
-      `VDL sign-up — ${d.name}`
-    )}&body=${encodeURIComponent(body)}`;
+    setPending(true);
+    const result = await submitJoin(d);
+    setPending(false);
+    if (!result.ok) {
+      setError(result.error);
+      return;
+    }
+    setError("");
     setDone(true);
   };
 
@@ -247,15 +235,9 @@ export default function JoinForm() {
               Thank you, {d.name.split(" ")[0]}.
             </p>
             <p className="mt-5 max-w-md leading-relaxed text-ink/70">
-              Your email app should have opened with your details ready to send
-              to the VDL team. Once we receive it, we&apos;ll keep you updated on
-              tours, conferences and volunteer opportunities near you.
-            </p>
-            <p className="mt-3 max-w-md text-sm text-ink/50">
-              If it didn&apos;t open, write to us directly at{" "}
-              <a href="mailto:hello@valuesfordailyliving.org" className="font-semibold text-forest underline">
-                hello@valuesfordailyliving.org
-              </a>.
+              Your details have been sent to the VDL team. We&apos;ll keep you
+              updated on tours, conferences and volunteer opportunities near
+              you.
             </p>
             <button
               onClick={() => {
@@ -470,9 +452,10 @@ export default function JoinForm() {
               ) : (
                 <button
                   type="submit"
-                  className="rounded-full bg-gold px-9 py-3.5 text-sm font-bold uppercase tracking-wider text-forest-deep transition-transform hover:-translate-y-0.5"
+                  disabled={pending}
+                  className="rounded-full bg-gold px-9 py-3.5 text-sm font-bold uppercase tracking-wider text-forest-deep transition-transform hover:-translate-y-0.5 disabled:opacity-60"
                 >
-                  Plant my details
+                  {pending ? "Planting…" : "Plant my details"}
                 </button>
               )}
             </div>

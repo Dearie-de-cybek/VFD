@@ -110,6 +110,7 @@ model Media {
 }
 
 /// role: "AMBASSADOR" | "PARENT" | "SCHOOL_OWNER" | "TEACHER" (validated in app code — sqlite has no native enum)
+/// source: "admin" | "join" — distinguishes admin-entered members from public /join submissions (for notifications)
 model Member {
   id         String   @id @default(cuid())
   name       String
@@ -119,8 +120,18 @@ model Member {
   stage      String?
   schoolName String?
   notes      String?
+  source     String   @default("admin")
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  body      String
+  createdAt DateTime @default(now())
 }
 
 /// channel: "EMAIL" | "SMS", status: "SENT" | "FAILED"

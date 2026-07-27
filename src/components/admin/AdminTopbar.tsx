@@ -1,12 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Search, Bell, BellOff, Sun, Moon, Plus } from "lucide-react";
+import { Search, Sun, Moon, Plus } from "lucide-react";
 import Link from "next/link";
 import { logoutAction } from "@/app/admin/logout-action";
-import { saveSubscription, removeSubscription } from "@/app/admin/push-actions";
-import { isPushSupported, getPushSubscription, subscribeToPush, unsubscribeFromPush } from "@/lib/push-client";
+import NotificationBell from "./NotificationBell";
 
 const TITLES: Record<string, { title: string; quickAdd?: string }> = {
   "/admin": { title: "Dashboard" },
@@ -32,37 +30,6 @@ export default function AdminTopbar({
   const last = segments.at(-1) ?? "dashboard";
   const fallbackTitle = last === "new" ? "New" : /^[a-z0-9]{20,}$/.test(last) ? "Edit" : last;
   const match = TITLES[pathname] ?? { title: fallbackTitle };
-
-  const [pushState, setPushState] = useState<"unsupported" | "off" | "on" | "busy">("off");
-
-  useEffect(() => {
-    if (!isPushSupported()) {
-      setPushState("unsupported");
-      return;
-    }
-    // browser subscription state can only be read client-side, post-mount
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    getPushSubscription().then((sub) => setPushState(sub ? "on" : "off"));
-  }, []);
-
-  const togglePush = async () => {
-    const wasOn = pushState === "on";
-    setPushState("busy");
-    try {
-      if (wasOn) {
-        const endpoint = await unsubscribeFromPush();
-        if (endpoint) await removeSubscription(endpoint);
-        setPushState("off");
-      } else {
-        const sub = await subscribeToPush();
-        await saveSubscription(sub.toJSON() as { endpoint: string; keys: { p256dh: string; auth: string } });
-        setPushState("on");
-      }
-    } catch (e) {
-      alert(e instanceof Error ? e.message : "Couldn't update notification settings.");
-      setPushState(wasOn ? "on" : "off");
-    }
-  };
 
   return (
     <header className="flex h-[72px] items-center justify-between gap-6 border-b border-[#E5E7EB] bg-white px-10 dark:border-white/10 dark:bg-[#0B0F0D]">
@@ -101,32 +68,7 @@ export default function AdminTopbar({
           {dark ? <Sun className="h-[18px] w-[18px]" /> : <Moon className="h-[18px] w-[18px]" />}
         </button>
 
-        <button
-          type="button"
-          onClick={togglePush}
-          disabled={pushState === "unsupported" || pushState === "busy"}
-          aria-label={
-            pushState === "on" ? "Turn off push notifications" : "Turn on push notifications"
-          }
-          aria-pressed={pushState === "on"}
-          title={
-            pushState === "unsupported"
-              ? "Push notifications aren't supported in this browser"
-              : pushState === "on"
-                ? "Push notifications on — click to turn off"
-                : "Click to turn on push notifications"
-          }
-          className="relative flex h-10 w-10 items-center justify-center rounded-[10px] border border-[#E5E7EB] text-[#6B7280] transition-colors hover:bg-[#F3F4F6] disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/10 dark:hover:bg-white/5"
-        >
-          {pushState === "unsupported" ? (
-            <BellOff className="h-[18px] w-[18px]" />
-          ) : (
-            <Bell className="h-[18px] w-[18px]" />
-          )}
-          {pushState === "on" && (
-            <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-[#22C55E]" />
-          )}
-        </button>
+        <NotificationBell />
 
         <div className="ml-1 flex items-center gap-2.5 border-l border-[#E5E7EB] pl-3 dark:border-white/10">
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#DCFCE7] text-xs font-semibold text-[#16A34A]">
