@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
+import { submitSelfAssessment } from "@/app/assessment/actions";
 
 const STATEMENTS = [
   { value: "Integrity", text: "I keep my word even when breaking it would cost me nothing." },
@@ -69,6 +70,20 @@ export default function AssessmentForm() {
     setError("");
     const total = Object.values(answers).reduce((a, b) => a + b, 0);
     setResult(total);
+
+    submitSelfAssessment({
+      name,
+      role,
+      total,
+      maxScore: STATEMENTS.length * 5,
+      band: band(total).title,
+      answers: STATEMENTS.map((s, i) => ({
+        label: s.value,
+        text: s.text,
+        score: answers[i] ?? 0,
+      })),
+    }).catch(() => {});
+
     requestAnimationFrame(() => {
       document.getElementById("assessment-result")?.scrollIntoView({ block: "center" });
       gsap.fromTo(

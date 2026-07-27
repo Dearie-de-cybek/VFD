@@ -1,5 +1,6 @@
 import "server-only";
 import { Resend } from "resend";
+import { renderEmailHtml } from "./email-template";
 
 export type SendResult = { ok: true } | { ok: false; error: string };
 
@@ -22,6 +23,7 @@ export async function sendEmail(to: string, subject: string, body: string): Prom
       to,
       subject,
       text: body,
+      html: renderEmailHtml({ heading: subject, body }),
     });
     if (error) return { ok: false, error: error.message };
     return { ok: true };

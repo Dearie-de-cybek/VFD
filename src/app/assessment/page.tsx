@@ -31,8 +31,9 @@ export default function AssessmentPage() {
         <div className="mx-auto max-w-3xl px-6 md:px-12 print:max-w-none print:px-0">
           <AssessmentTabs />
           <p className="mt-10 text-center text-xs leading-relaxed text-ink/40 print:hidden">
-            These assessments are reflective, not diagnostic. Nothing is
-            stored or transmitted — everything is calculated on your device.
+            These assessments are reflective, not diagnostic. Your responses
+            are shared with the Values for Daily Living team so they can
+            better understand and support the people who take them.
           </p>
         </div>
       </section>

@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 import TreeLogo from "./TreeLogo";
 import { IconCheck } from "./icons";
-import { submitJoin } from "@/app/join/actions";
+import { submitJoin, type JoinData } from "@/app/join/actions";
 
 const NIGERIAN_STATES = [
   "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue",
@@ -173,7 +173,8 @@ export default function JoinForm() {
       return;
     }
     setPending(true);
-    const result = await submitJoin(d);
+    // validate() above guarantees d.type is non-empty by this point
+    const result = await submitJoin(d as JoinData);
     setPending(false);
     if (!result.ok) {
       setError(result.error);

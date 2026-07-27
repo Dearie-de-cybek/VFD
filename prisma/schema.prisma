@@ -134,6 +134,20 @@ model Message {
   createdAt DateTime @default(now())
 }
 
+/// type: "self" | "scorecard". answers/meta are JSON-encoded text (sqlite has no native json helpers here).
+model AssessmentSubmission {
+  id        String   @id @default(cuid())
+  type      String
+  name      String?
+  role      String?
+  meta      String?
+  score     Int
+  maxScore  Int
+  band      String
+  answers   String
+  createdAt DateTime @default(now())
+}
+
 /// channel: "EMAIL" | "SMS", status: "SENT" | "FAILED"
 model Campaign {
   id          String    @id @default(cuid())

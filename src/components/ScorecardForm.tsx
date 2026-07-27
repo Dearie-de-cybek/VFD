@@ -12,6 +12,7 @@ import {
   type Band,
   type Question,
 } from "@/lib/scorecard";
+import { submitScorecard } from "@/app/assessment/actions";
 
 const BAND_ICON: Record<Band["icon"], typeof IconSeedling> = {
   seedling: IconSeedling,
@@ -158,6 +159,25 @@ export default function ScorecardForm() {
   const printCard = (mode: "blank" | "filled") => {
     setPrintMode(mode);
     setTimeout(() => window.print(), 60);
+  };
+
+  const finish = () => {
+    setPhase("done");
+    submitScorecard({
+      child: info.child,
+      level: info.level,
+      klass: info.klass || undefined,
+      teacher: info.teacher || undefined,
+      parent: info.parent || undefined,
+      average,
+      band: bandFor(average).label,
+      answers: questions.map((qu) => ({
+        label: qu.value,
+        text: qu.text,
+        score: scores[qu.id] ?? 0,
+        remark: remarks[qu.id],
+      })),
+    }).catch(() => {});
   };
 
   const weakest = [...scored]
@@ -414,7 +434,7 @@ export default function ScorecardForm() {
                 className="rounded-full border border-ink/20 px-7 py-3.5 text-sm font-semibold transition-colors hover:border-forest hover:text-forest">
                 ← Back
               </button>
-              <button type="button" onClick={() => setPhase("done")}
+              <button type="button" onClick={finish}
                 className="inline-flex items-center gap-2 rounded-full bg-gold px-9 py-3.5 text-sm font-bold uppercase tracking-wider text-forest-deep transition-transform hover:-translate-y-0.5">
                 <IconTree className="h-4 w-4" />
                 See the results
