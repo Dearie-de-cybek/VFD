@@ -1,10 +1,10 @@
 import "server-only";
-import { mkdir, writeFile, unlink } from "fs/promises";
-import path from "path";
 import crypto from "crypto";
+import { createAdminClient } from "@supabase/server/core";
 import { prisma } from "@/lib/prisma";
 
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
+const BUCKET = "uploads";
+const PUBLIC_URL_MARKER = `/storage/v1/object/public/${BUCKET}/`;
 const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml"]);
 const MAX_BYTES = 8 * 1024 * 1024; // 8MB
 
@@ -25,7 +25,7 @@ function extFor(mime: string) {
   }
 }
 
-/** Saves an uploaded image to /public/uploads and records it in the Media table. Returns the public path. */
+/** Uploads an image to Supabase Storage and records it in the Media table. Returns the public URL. */
 export async function saveUploadedImage(file: File): Promise<string> {
   if (!ALLOWED_TYPES.has(file.type)) {
     throw new Error("Unsupported file type. Use JPG, PNG, WEBP, GIF or SVG.");
@@ -34,25 +34,33 @@ export async function saveUploadedImage(file: File): Promise<string> {
     throw new Error("File too large. Max 8MB.");
   }
 
-  await mkdir(UPLOAD_DIR, { recursive: true });
-
   const filename = `${crypto.randomUUID()}.${extFor(file.type)}`;
-  const buffer = Buffer.from(await file.arrayBuffer());
-  await writeFile(path.join(UPLOAD_DIR, filename), buffer);
+  const supabase = createAdminClient();
 
-  const publicPath = `/uploads/${filename}`;
-  await prisma.media.create({ data: { path: publicPath, filename } });
+  const { error: uploadError } = await supabase.storage
+    .from(BUCKET)
+    .upload(filename, file, { contentType: file.type, upsert: false });
+  if (uploadError) throw new Error(uploadError.message);
 
-  return publicPath;
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from(BUCKET).getPublicUrl(filename);
+
+  await prisma.media.create({ data: { path: publicUrl, filename } });
+
+  return publicUrl;
 }
 
-/** Removes a previously uploaded image from /public/uploads. Safe to call even if the file is already gone. */
-export async function deleteUploadedImage(publicPath: string): Promise<void> {
-  if (!publicPath.startsWith("/uploads/")) return;
-  const filePath = path.join(process.cwd(), "public", publicPath);
+/** Removes a previously uploaded image from Supabase Storage. Safe to call even if the file is already gone. */
+export async function deleteUploadedImage(publicUrl: string): Promise<void> {
+  const idx = publicUrl.indexOf(PUBLIC_URL_MARKER);
+  if (idx === -1) return;
+  const filename = publicUrl.slice(idx + PUBLIC_URL_MARKER.length);
+
   try {
-    await unlink(filePath);
+    const supabase = createAdminClient();
+    await supabase.storage.from(BUCKET).remove([filename]);
   } catch {
-    // already deleted or never existed on disk — nothing to do
+    // already deleted, never existed, or a transient network error — nothing to do
   }
 }
