@@ -80,7 +80,6 @@ export default function Pillars() {
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-2">
             <p
-              data-reveal
               className="flex items-center gap-3 text-sm tracking-wide text-ink/70 lg:sticky lg:top-[calc(var(--header-h)+2rem)]"
             >
               <span className="h-2 w-2 bg-gold" />
@@ -132,7 +131,6 @@ export default function Pillars() {
 
           <div className="lg:col-span-4">
             <div
-              data-reveal
               className="wwd-swap relative aspect-[3/4] overflow-hidden rounded-xl lg:sticky lg:top-[calc(var(--header-h)+2rem)]"
             >
               <Image
