@@ -117,7 +117,7 @@ export default function AdminSidebar({
           </li>
           <li>
             <a
-              href="mailto:eburujacintha@gmail.com"
+              href="mailto:valuesfordailyliving12@gmail.com"
               className="flex h-11 items-center gap-3 rounded-[10px] px-3 text-sm text-[#374151] transition-colors duration-200 hover:bg-[#F3F4F6] dark:text-white/70 dark:hover:bg-white/5"
             >
               <HelpCircle className="h-[18px] w-[18px] text-[#6B7280]" />
