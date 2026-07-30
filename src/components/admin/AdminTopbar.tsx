@@ -11,6 +11,7 @@ const TITLES: Record<string, { title: string; quickAdd?: string }> = {
   "/admin/events": { title: "Events", quickAdd: "/admin/events/new" },
   "/admin/blogs": { title: "Blogs", quickAdd: "/admin/blogs/new" },
   "/admin/projects": { title: "Projects & Photos", quickAdd: "/admin/projects/new" },
+  "/admin/quotes": { title: "Quotes", quickAdd: "/admin/quotes/new" },
   "/admin/members": { title: "Members", quickAdd: "/admin/members/new" },
   "/admin/messages": { title: "Messages" },
   "/admin/assessments": { title: "Assessments" },

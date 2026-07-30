@@ -220,6 +220,20 @@ async function main() {
     });
   }
   console.log(`Seeded ${POSTS.length} blog posts`);
+
+  await prisma.quote.upsert({
+    where: { id: "seed-quote-0" },
+    update: {},
+    create: {
+      id: "seed-quote-0",
+      text: "A nation can rise no higher than the values of its people. So we begin where nations truly begin — in the heart of a child.",
+      author: "The Values for Daily Living movement",
+      img: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1000&q=80",
+      alt: "Children writing at their desks",
+      order: 0,
+    },
+  });
+  console.log("Seeded 1 quote");
 }
 
 main()
