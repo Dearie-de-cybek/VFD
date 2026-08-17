@@ -47,10 +47,10 @@ export default async function MemberDashboardPage() {
         <div className="mx-auto max-w-7xl px-6 md:px-12">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <span className="rounded-full bg-gold/15 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-gold-soft flex items-center gap-1.5">
                   <Sparkles className="h-3 w-3" />
-                  {isOutside ? "Webinar Guest" : "Full Member"}
+                  {isOutside ? "Outside Member" : "Full Member"}
                 </span>
                 <span className="rounded-full bg-cream/10 px-3 py-1 text-xs font-medium text-cream/70">
                   {memberRoleLabel(session.role)}
@@ -61,16 +61,16 @@ export default async function MemberDashboardPage() {
               </h1>
               <p className="mt-2 text-sm text-cream/60 max-w-xl">
                 {isOutside 
-                  ? "Access virtual webinars, conferences, and program resources here on your guest dashboard."
+                  ? "Access virtual webinars, conferences, and program resources here on your member dashboard."
                   : "Access your character scorecard, take moral assessments, view school tour events, and collaborate on VDL projects."
                 }
               </p>
             </div>
 
-            <form action={logoutAction}>
+            <form action={logoutAction} className="w-full md:w-auto">
               <button
                 type="submit"
-                className="flex items-center gap-2 rounded-full border border-cream/20 bg-cream/5 px-5 py-2.5 text-sm font-semibold transition-colors hover:bg-cream/15 hover:border-cream/40"
+                className="flex w-full md:w-auto items-center justify-center gap-2 rounded-full border border-cream/20 bg-cream/5 px-5 py-2.5 text-sm font-semibold transition-colors hover:bg-cream/15 hover:border-cream/40"
               >
                 <LogOut className="h-4 w-4" />
                 Sign out
@@ -153,7 +153,7 @@ export default async function MemberDashboardPage() {
                 </div>
                 <Link
                   href="/contact?subject=Upgrade%20to%20Full%20VFD%20Membership"
-                  className="relative shrink-0 rounded-full bg-gold px-6 py-3.5 text-sm font-bold uppercase tracking-wider text-forest-deep transition-transform hover:-translate-y-0.5"
+                  className="relative shrink-0 w-full md:w-auto text-center rounded-full bg-gold px-6 py-3.5 text-sm font-bold uppercase tracking-wider text-forest-deep transition-transform hover:-translate-y-0.5"
                 >
                   Request Upgrade
                 </Link>
@@ -243,18 +243,18 @@ export default async function MemberDashboardPage() {
                 Your Profile
               </h3>
               <ul className="mt-4 flex flex-col gap-3.5 text-sm">
-                <li className="flex justify-between">
-                  <span className="text-ink/50">Name:</span>
-                  <span className="font-semibold text-ink">{session.name}</span>
+                <li className="flex flex-col sm:flex-row sm:justify-between gap-0.5 sm:gap-4 border-b border-ink/5 pb-2 last:border-0 last:pb-0">
+                  <span className="text-xs text-ink/50">Name:</span>
+                  <span className="font-semibold text-ink break-all">{session.name}</span>
                 </li>
-                <li className="flex justify-between">
-                  <span className="text-ink/50">Email:</span>
-                  <span className="font-semibold text-ink">{session.email}</span>
+                <li className="flex flex-col sm:flex-row sm:justify-between gap-0.5 sm:gap-4 border-b border-ink/5 pb-2 last:border-0 last:pb-0">
+                  <span className="text-xs text-ink/50">Email:</span>
+                  <span className="font-semibold text-ink break-all">{session.email}</span>
                 </li>
-                <li className="flex justify-between">
-                  <span className="text-ink/50">Membership:</span>
+                <li className="flex flex-col sm:flex-row sm:justify-between gap-0.5 sm:gap-4 border-b border-ink/5 pb-2 last:border-0 last:pb-0">
+                  <span className="text-xs text-ink/50">Membership:</span>
                   <span className="font-semibold text-ink">
-                    {isOutside ? "Webinar Guest" : "Full VFD Member"}
+                    {isOutside ? "Outside Member" : "Full VFD Member"}
                   </span>
                 </li>
               </ul>

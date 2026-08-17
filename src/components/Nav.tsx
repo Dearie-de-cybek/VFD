@@ -227,20 +227,20 @@ export default function Nav() {
                 onClick={() => setOpen(!open)}
                 aria-label={open ? "Close menu" : "Open menu"}
                 aria-expanded={open}
-                className={`relative z-[70] flex h-11 w-11 flex-col items-center justify-center gap-1.5 rounded-full border xl:hidden ${
-                  scrolled ? "border-ink/15" : "border-cream/40"
+                className={`relative z-[70] flex h-11 w-11 flex-col items-center justify-center gap-1.5 rounded-full border xl:hidden transition-colors ${
+                  open
+                    ? "border-cream/20 text-cream"
+                    : scrolled
+                    ? "border-ink/15 text-ink"
+                    : "border-cream/40 text-cream"
                 }`}
               >
                 <span
-                  className={`block h-[2px] w-5 bg-current transition-transform duration-300 ${
-                    open ? "text-cream" : ""
-                  }`}
+                  className="block h-[2px] w-5 bg-current transition-transform duration-300"
                   style={open ? { transform: "translateY(4px) rotate(45deg)" } : undefined}
                 />
                 <span
-                  className={`block h-[2px] w-5 bg-current transition-transform duration-300 ${
-                    open ? "text-cream" : ""
-                  }`}
+                  className="block h-[2px] w-5 bg-current transition-transform duration-300"
                   style={open ? { transform: "translateY(-4px) rotate(-45deg)" } : undefined}
                 />
               </button>
@@ -252,61 +252,64 @@ export default function Nav() {
       {/* mobile overlay */}
       <div
         ref={overlayRef}
-        className="fixed inset-0 z-[60] hidden flex-col justify-between overflow-y-auto bg-forest-deep px-6 pb-10 pt-32 text-cream"
+        className="fixed inset-0 z-[60] hidden flex-col bg-forest-deep px-6 pb-12 pt-32 text-cream overflow-y-auto"
       >
-        <ul className="flex flex-col gap-1">
-          {NAV_ITEMS.map((item, i) => {
-            if ("items" in item) {
+        <div className="flex flex-col gap-10">
+          <ul className="flex flex-col gap-2">
+            {NAV_ITEMS.map((item, i) => {
+              if ("items" in item) {
+                return (
+                  <li key={item.label} className="mb-4">
+                    <span className="font-mono text-xs text-gold block mb-2 px-2 uppercase tracking-wider">{item.label}</span>
+                    <ul className="pl-2 flex flex-col gap-2 border-l border-cream/10">
+                      {item.items?.map((sub) => (
+                        <li key={sub.href} className="overflow-hidden">
+                          <Link
+                            href={sub.href}
+                            onClick={() => setOpen(false)}
+                            className="menu-link flex items-baseline gap-4 py-1.5"
+                          >
+                            <span className="font-display text-2xl">{sub.label}</span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                );
+              }
               return (
-                <li key={item.label} className="mt-2 mb-2">
-                  <span className="font-mono text-xs text-gold block mb-1 px-4">{item.label}</span>
-                  <ul className="pl-4 flex flex-col gap-1">
-                    {item.items?.map((sub) => (
-                      <li key={sub.href} className="overflow-hidden">
-                        <Link
-                          href={sub.href}
-                          onClick={() => setOpen(false)}
-                          className="menu-link flex items-baseline gap-4 py-1"
-                        >
-                          <span className="font-display text-2xl">{sub.label}</span>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
+                <li key={item.href} className="overflow-hidden mb-1">
+                  <Link
+                    href={item.href}
+                    onClick={() => setOpen(false)}
+                    className="menu-link flex items-baseline gap-4 py-2"
+                  >
+                    <span className="font-mono text-xs text-gold">0{i + 1}</span>
+                    <span className="font-display text-3xl sm:text-4xl">{item.label}</span>
+                  </Link>
                 </li>
               );
-            }
-            return (
-              <li key={item.href} className="overflow-hidden">
-                <Link
-                  href={item.href}
-                  onClick={() => setOpen(false)}
-                  className="menu-link flex items-baseline gap-4 py-1.5"
-                >
-                  <span className="font-mono text-xs text-gold">0{i + 1}</span>
-                  <span className="font-display text-3xl sm:text-4xl">{item.label}</span>
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-        <div className="menu-link mt-8 flex flex-wrap items-end justify-between gap-6">
-          <div className="text-sm text-cream/70">
-            127 Chime Avenue,
-            <br />
-            New Haven, Enugu, Nigeria
-            <br />
-            <a href="tel:+2347030385985" className="text-gold-soft">
-              +234 703 038 5985
-            </a>
+            })}
+          </ul>
+
+          <div className="menu-link mt-4 pt-6 border-t border-cream/10 flex flex-wrap items-end justify-between gap-6">
+            <div className="text-sm text-cream/70">
+              127 Chime Avenue,
+              <br />
+              New Haven, Enugu, Nigeria
+              <br />
+              <a href="tel:+2347030385985" className="text-gold-soft">
+                +234 703 038 5985
+              </a>
+            </div>
+            <Link
+              href="/#get-involved"
+              onClick={() => setOpen(false)}
+              className="rounded-full bg-gold px-7 py-3 text-sm font-semibold text-forest-deep"
+            >
+              Donate
+            </Link>
           </div>
-          <Link
-            href="/#get-involved"
-            onClick={() => setOpen(false)}
-            className="rounded-full bg-gold px-7 py-3 text-sm font-semibold text-forest-deep"
-          >
-            Donate
-          </Link>
         </div>
       </div>
     </>
