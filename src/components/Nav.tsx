@@ -5,13 +5,24 @@ import { useEffect, useRef, useState } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 import TreeLogo from "./TreeLogo";
 
-const LINKS = [
+const NAV_ITEMS = [
   { href: "/", label: "Home" },
-  { href: "/about", label: "About Us" },
-  { href: "/projects", label: "Our Projects" },
+  {
+    label: "About",
+    items: [
+      { href: "/about", label: "About Us" },
+      { href: "/projects", label: "Our Projects" },
+    ],
+  },
   { href: "/events", label: "Events & Debates" },
-  { href: "/blogs", label: "Blogs" },
-  { href: "/assessment", label: "Moral Assessment Form" },
+  {
+    label: "Resources",
+    items: [
+      { href: "/blogs", label: "Blogs" },
+      { href: "/assessment", label: "Moral Assessment Form" },
+      { href: "/shop", label: "Shop & Books" },
+    ],
+  },
   { href: "/contact", label: "Contact Us" },
 ];
 
@@ -154,20 +165,51 @@ export default function Nav() {
             </Link>
 
             <ul className="hidden items-center gap-1 xl:flex xl:gap-2">
-              {LINKS.map((l) => (
-                <li key={l.href}>
-                  <Link
-                    href={l.href}
-                    className={`inline-block whitespace-nowrap px-2.5 py-3 text-[13px] font-medium tracking-wide transition-colors xl:px-4 xl:text-sm ${
-                      scrolled
-                        ? "text-ink/80 hover:text-forest"
-                        : "text-cream/90 hover:text-gold-soft"
-                    }`}
-                  >
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
+              {NAV_ITEMS.map((item) => {
+                if ("items" in item) {
+                  return (
+                    <li key={item.label} className="relative group py-3">
+                      <button
+                        className={`inline-flex items-center gap-1 whitespace-nowrap px-2.5 py-1 text-[13px] font-medium tracking-wide transition-colors xl:px-4 xl:text-sm cursor-pointer outline-none ${
+                          scrolled
+                            ? "text-ink/80 hover:text-forest"
+                            : "text-cream/90 hover:text-gold-soft"
+                        }`}
+                      >
+                        {item.label}
+                        <svg className="w-3 h-3 fill-current transition-transform duration-200 group-hover:rotate-180" viewBox="0 0 20 20">
+                          <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                        </svg>
+                      </button>
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 min-w-[200px] rounded-xl border border-ink/10 bg-white p-2 shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50">
+                        {item.items?.map((sub) => (
+                          <Link
+                            key={sub.href}
+                            href={sub.href}
+                            className="block rounded-lg px-4 py-2 text-sm font-medium text-ink hover:bg-forest/5 hover:text-forest transition-colors"
+                          >
+                            {sub.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </li>
+                  );
+                }
+                return (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className={`inline-block whitespace-nowrap px-2.5 py-3 text-[13px] font-medium tracking-wide transition-colors xl:px-4 xl:text-sm ${
+                        scrolled
+                          ? "text-ink/80 hover:text-forest"
+                          : "text-cream/90 hover:text-gold-soft"
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
 
             <div className="flex items-center gap-3">
@@ -213,18 +255,40 @@ export default function Nav() {
         className="fixed inset-0 z-[60] hidden flex-col justify-between overflow-y-auto bg-forest-deep px-6 pb-10 pt-32 text-cream"
       >
         <ul className="flex flex-col gap-1">
-          {LINKS.map((l, i) => (
-            <li key={l.href} className="overflow-hidden">
-              <Link
-                href={l.href}
-                onClick={() => setOpen(false)}
-                className="menu-link flex items-baseline gap-4 py-1.5"
-              >
-                <span className="font-mono text-xs text-gold">0{i + 1}</span>
-                <span className="font-display text-3xl sm:text-4xl">{l.label}</span>
-              </Link>
-            </li>
-          ))}
+          {NAV_ITEMS.map((item, i) => {
+            if ("items" in item) {
+              return (
+                <li key={item.label} className="mt-2 mb-2">
+                  <span className="font-mono text-xs text-gold block mb-1 px-4">{item.label}</span>
+                  <ul className="pl-4 flex flex-col gap-1">
+                    {item.items?.map((sub) => (
+                      <li key={sub.href} className="overflow-hidden">
+                        <Link
+                          href={sub.href}
+                          onClick={() => setOpen(false)}
+                          className="menu-link flex items-baseline gap-4 py-1"
+                        >
+                          <span className="font-display text-2xl">{sub.label}</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              );
+            }
+            return (
+              <li key={item.href} className="overflow-hidden">
+                <Link
+                  href={item.href}
+                  onClick={() => setOpen(false)}
+                  className="menu-link flex items-baseline gap-4 py-1.5"
+                >
+                  <span className="font-mono text-xs text-gold">0{i + 1}</span>
+                  <span className="font-display text-3xl sm:text-4xl">{item.label}</span>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
         <div className="menu-link mt-8 flex flex-wrap items-end justify-between gap-6">
           <div className="text-sm text-cream/70">

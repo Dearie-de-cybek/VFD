@@ -5,6 +5,7 @@ import { gsap, useGSAP } from "@/lib/gsap";
 import TreeLogo from "./TreeLogo";
 import { IconCheck } from "./icons";
 import { submitJoin, type JoinData } from "@/app/join/actions";
+import Link from "next/link";
 
 const NIGERIAN_STATES = [
   "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue",
@@ -30,9 +31,12 @@ const OCCUPATIONS = [
   "Other",
 ];
 
-const STEPS = ["About you", "Where you're from", "What you do", "Your message"];
+const STEPS_VFD = ["About you", "Where you're from", "What you do", "Your message"];
+const STEPS_OUTSIDE = ["About you", "Your message"];
 
 type Data = {
+  joinType: "VFD" | "OUTSIDE";
+  password: string;
   name: string;
   email: string;
   phone: string;
@@ -50,6 +54,8 @@ type Data = {
 };
 
 const INITIAL: Data = {
+  joinType: "VFD",
+  password: "",
   name: "", email: "", phone: "", type: "",
   address: "", state: "", nationality: "Nigerian",
   school: "", klass: "", age: "",
@@ -77,6 +83,8 @@ export default function JoinForm() {
   const [done, setDone] = useState(false);
   const [pending, setPending] = useState(false);
 
+  const steps = d.joinType === "OUTSIDE" ? STEPS_OUTSIDE : STEPS_VFD;
+
   const set = (patch: Partial<Data>) => setD((v) => ({ ...v, ...patch }));
 
   const { contextSafe } = useGSAP(
@@ -86,7 +94,7 @@ export default function JoinForm() {
         "[data-tree='join'] .tree-branch path"
       );
       const total = paths.length;
-      const progress = done ? 1 : step / STEPS.length;
+      const progress = done ? 1 : step / steps.length;
       const visible = Math.round(total * progress);
       paths.forEach((path, i) => {
         const len = path.getTotalLength();
@@ -106,7 +114,7 @@ export default function JoinForm() {
         ease: done ? "back.out(2.5)" : "power2.in",
       });
     },
-    { scope, dependencies: [step, done] }
+    { scope, dependencies: [step, done, d.joinType] }
   );
 
   const validate = (): string => {
@@ -114,23 +122,26 @@ export default function JoinForm() {
       if (!d.name.trim()) return "Please enter your name.";
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) return "Please enter a valid email address.";
       if (d.phone.replace(/\D/g, "").length < 7) return "Please enter a valid phone number.";
-      if (!d.type) return "Please tell us if you're joining as a teenager or an adult.";
+      if (d.password.length < 6) return "Password must be at least 6 characters.";
+      if (d.joinType === "VFD" && !d.type) return "Please tell us if you're joining as a teenager or an adult.";
     }
-    if (step === 1) {
-      if (!d.address.trim()) return "Please enter your address.";
-      if (!d.state) return "Please select your state of origin.";
-      if (!d.nationality.trim()) return "Please enter your nationality.";
-    }
-    if (step === 2) {
-      if (d.type === "Teenager") {
-        if (!d.school.trim()) return "Please enter your school.";
-        if (!d.klass) return "Please select your class.";
-        const age = Number(d.age);
-        if (!d.age || age < 10 || age > 19) return "Please enter your age (10–19).";
-      } else {
-        if (!d.occupation) return "Please select your occupation.";
-        if (orgField(d.occupation) && !d.orgName.trim())
-          return `${orgField(d.occupation)!.label} is required.`;
+    if (d.joinType === "VFD") {
+      if (step === 1) {
+        if (!d.address.trim()) return "Please enter your address.";
+        if (!d.state) return "Please select your state of origin.";
+        if (!d.nationality.trim()) return "Please enter your nationality.";
+      }
+      if (step === 2) {
+        if (d.type === "Teenager") {
+          if (!d.school.trim()) return "Please enter your school.";
+          if (!d.klass) return "Please select your class.";
+          const age = Number(d.age);
+          if (!d.age || age < 10 || age > 19) return "Please enter your age (10–19).";
+        } else {
+          if (!d.occupation) return "Please select your occupation.";
+          if (orgField(d.occupation) && !d.orgName.trim())
+            return `${orgField(d.occupation)!.label} is required.`;
+        }
       }
     }
     return "";
@@ -173,7 +184,6 @@ export default function JoinForm() {
       return;
     }
     setPending(true);
-    // validate() above guarantees d.type is non-empty by this point
     const result = await submitJoin(d as JoinData);
     setPending(false);
     if (!result.ok) {
@@ -189,11 +199,11 @@ export default function JoinForm() {
       {/* left — progress panel */}
       <div className="relative bg-forest-deep p-8 text-cream lg:col-span-4 lg:p-10">
         <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-soft">
-          {done ? "Welcome aboard" : `Step ${step + 1} of ${STEPS.length}`}
+          {done ? "Welcome aboard" : `Step ${step + 1} of ${steps.length}`}
         </p>
 
         <ol className="mt-8 space-y-4">
-          {STEPS.map((label, i) => (
+          {steps.map((label, i) => (
             <li key={label} className="flex items-center gap-4">
               <span
                 className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border font-mono text-xs transition-colors duration-300 ${
@@ -236,20 +246,28 @@ export default function JoinForm() {
               Thank you, {d.name.split(" ")[0]}.
             </p>
             <p className="mt-5 max-w-md leading-relaxed text-ink/70">
-              Your details have been sent to the VDL team. We&apos;ll keep you
-              updated on tours, conferences and volunteer opportunities near
-              you.
+              {d.joinType === "OUTSIDE"
+                ? "Your Outside Member account has been created. You can now log in to the Member Portal to view upcoming webinars and resources."
+                : "Your VDL membership account has been created. We've sent your details to the VDL team. We'll keep you updated on tours, conferences, and volunteer opportunities."}
             </p>
-            <button
-              onClick={() => {
-                setDone(false);
-                setStep(0);
-                setD(INITIAL);
-              }}
-              className="mt-9 rounded-full border border-ink/20 px-8 py-3.5 text-sm font-semibold transition-colors hover:border-forest hover:text-forest"
-            >
-              Register someone else
-            </button>
+            <div className="mt-9 flex flex-wrap gap-4">
+              <Link
+                href="/login"
+                className="rounded-full bg-forest px-8 py-3.5 text-sm font-semibold text-cream transition-colors hover:bg-forest-deep"
+              >
+                Log in to Portal
+              </Link>
+              <button
+                onClick={() => {
+                  setDone(false);
+                  setStep(0);
+                  setD(INITIAL);
+                }}
+                className="rounded-full border border-ink/20 px-8 py-3.5 text-sm font-semibold transition-colors hover:border-forest hover:text-forest"
+              >
+                Register someone else
+              </button>
+            </div>
           </div>
         ) : (
           <form onSubmit={submit} noValidate>
@@ -257,31 +275,65 @@ export default function JoinForm() {
               {step === 0 && (
                 <fieldset>
                   <legend className="font-display text-3xl tracking-tight">
-                    First, who are we planting with?
+                    How would you like to join?
                   </legend>
-                  <div className="mt-7 grid gap-4 sm:grid-cols-2">
-                    {(["Teenager", "Adult"] as const).map((t) => (
-                      <button
-                        key={t}
-                        type="button"
-                        onClick={() => set({ type: t, occupation: "", school: "", klass: "", age: "", orgName: "" })}
-                        aria-pressed={d.type === t}
-                        className={`rounded-xl border p-6 text-left transition-colors ${
-                          d.type === t
-                            ? "border-forest bg-forest text-cream"
-                            : "border-ink/15 bg-white hover:border-forest/50"
-                        }`}
-                      >
-                        <span className="font-display text-2xl">{t}</span>
-                        <span className={`mt-1.5 block text-sm ${d.type === t ? "text-cream/70" : "text-ink/50"}`}>
-                          {t === "Teenager"
-                            ? "In secondary school, 10–19 years old"
-                            : "Parent, teacher, professional or leader"}
-                        </span>
-                      </button>
-                    ))}
+                  
+                  <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                    <button
+                      type="button"
+                      onClick={() => set({ joinType: "VFD" })}
+                      className={`rounded-xl border p-5 text-left transition-all ${
+                        d.joinType === "VFD"
+                          ? "border-forest bg-forest text-cream ring-2 ring-forest/30"
+                          : "border-ink/15 bg-white hover:border-forest/50"
+                      }`}
+                    >
+                      <span className="font-display text-xl block">Full VFD Member</span>
+                      <span className={`mt-1 block text-xs leading-relaxed ${d.joinType === "VFD" ? "text-cream/80" : "text-ink/60"}`}>
+                        Get moral scorecard access, school tours, events, and assessments.
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => set({ joinType: "OUTSIDE" })}
+                      className={`rounded-xl border p-5 text-left transition-all ${
+                        d.joinType === "OUTSIDE"
+                          ? "border-forest bg-forest text-cream ring-2 ring-forest/30"
+                          : "border-ink/15 bg-white hover:border-forest/50"
+                      }`}
+                    >
+                      <span className="font-display text-xl block">Outside Member</span>
+                      <span className={`mt-1 block text-xs leading-relaxed ${d.joinType === "OUTSIDE" ? "text-cream/80" : "text-ink/60"}`}>
+                        Access webinars, virtual sessions, resources, and calendar updates only.
+                      </span>
+                    </button>
                   </div>
-                  <div className="mt-6 grid gap-5 sm:grid-cols-2">
+
+                  {d.joinType === "VFD" && (
+                    <div className="mt-6">
+                      <span className="text-sm font-semibold block mb-2">Member Type</span>
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        {(["Teenager", "Adult"] as const).map((t) => (
+                          <button
+                            key={t}
+                            type="button"
+                            onClick={() => set({ type: t, occupation: "", school: "", klass: "", age: "", orgName: "" })}
+                            aria-pressed={d.type === t}
+                            className={`rounded-xl border px-5 py-3 text-left transition-colors ${
+                              d.type === t
+                                ? "border-gold bg-gold text-forest-deep"
+                                : "border-ink/15 bg-white hover:border-forest/30"
+                            }`}
+                          >
+                            <span className="font-semibold text-sm">{t}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="mt-6 grid gap-4 sm:grid-cols-2">
                     <label className="block sm:col-span-2">
                       <span className="text-sm font-semibold">Full name</span>
                       <input type="text" value={d.name} onChange={(e) => set({ name: e.target.value })}
@@ -297,11 +349,16 @@ export default function JoinForm() {
                       <input type="tel" value={d.phone} onChange={(e) => set({ phone: e.target.value })}
                         placeholder="e.g. 0703 038 5985" className={inputCls} />
                     </label>
+                    <label className="block sm:col-span-2">
+                      <span className="text-sm font-semibold">Create Password</span>
+                      <input type="password" value={d.password} onChange={(e) => set({ password: e.target.value })}
+                        placeholder="At least 6 characters" className={inputCls} />
+                    </label>
                   </div>
                 </fieldset>
               )}
 
-              {step === 1 && (
+              {step === 1 && d.joinType === "VFD" && (
                 <fieldset>
                   <legend className="font-display text-3xl tracking-tight">
                     Where are your roots?
@@ -332,7 +389,7 @@ export default function JoinForm() {
                 </fieldset>
               )}
 
-              {step === 2 && d.type === "Teenager" && (
+              {step === 2 && d.joinType === "VFD" && d.type === "Teenager" && (
                 <fieldset>
                   <legend className="font-display text-3xl tracking-tight">
                     Tell us about school.
@@ -363,7 +420,7 @@ export default function JoinForm() {
                 </fieldset>
               )}
 
-              {step === 2 && d.type === "Adult" && (
+              {step === 2 && d.joinType === "VFD" && d.type === "Adult" && (
                 <fieldset>
                   <legend className="font-display text-3xl tracking-tight">
                     What do you do?
@@ -393,7 +450,7 @@ export default function JoinForm() {
                 </fieldset>
               )}
 
-              {step === 3 && (
+              {((step === 1 && d.joinType === "OUTSIDE") || (step === 3 && d.joinType === "VFD")) && (
                 <fieldset>
                   <legend className="font-display text-3xl tracking-tight">
                     Anything for the VDL team?
@@ -415,8 +472,8 @@ export default function JoinForm() {
                         className="mt-1 h-4 w-4 accent-[#14432e]"
                       />
                       <span className="text-sm leading-relaxed text-ink/70">
-                        Keep me updated on VDL activities — school tours,
-                        conferences, volunteer opportunities and new resources.
+                        Keep me updated on VDL activities — webinars, school tours,
+                        conferences, and new resources.
                       </span>
                     </label>
                   </div>
@@ -442,7 +499,7 @@ export default function JoinForm() {
               ) : (
                 <span />
               )}
-              {step < STEPS.length - 1 ? (
+              {step < steps.length - 1 ? (
                 <button
                   type="button"
                   onClick={() => go(1)}

@@ -9,8 +9,8 @@ export type FolderRow = {
   id: string;
   title: string;
   subtitle: string;
-  image?: string;
-  photoCount: number;
+  image?: string | null;
+  photoCount?: number;
   registrationCount?: number;
   published: boolean;
   featured?: boolean;
@@ -45,7 +45,7 @@ export default function FolderGrid({
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search folders…"
+          placeholder="Search items…"
           className="w-full bg-transparent text-[#111827] outline-none placeholder:text-[#6B7280] dark:text-white"
         />
       </div>
@@ -83,7 +83,7 @@ export default function FolderGrid({
                   <form
                     action={deleteAction}
                     onSubmit={(e) => {
-                      if (!confirm(`Delete "${row.title}" and all its photos? This cannot be undone.`)) {
+                      if (!confirm(`Delete "${row.title}"? This cannot be undone.`)) {
                         e.preventDefault();
                       }
                     }}
@@ -109,9 +109,16 @@ export default function FolderGrid({
 
               <div className="mt-4 flex items-center justify-between text-xs">
                 <span className="text-[#6B7280]">
-                  {row.photoCount} {row.photoCount === 1 ? "photo" : "photos"}
-                  {row.registrationCount !== undefined &&
-                    ` · ${row.registrationCount} registered`}
+                  {row.photoCount !== undefined ? (
+                    <span>
+                      {row.photoCount} {row.photoCount === 1 ? "photo" : "photos"}
+                      {row.registrationCount !== undefined && ` · ${row.registrationCount} registered`}
+                    </span>
+                  ) : row.registrationCount !== undefined ? (
+                    <span>{row.registrationCount} registered</span>
+                  ) : (
+                    <span className="opacity-0">—</span>
+                  )}
                 </span>
                 <div className="flex items-center gap-1.5">
                   {row.featured && (

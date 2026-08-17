@@ -14,6 +14,7 @@ import {
   Mail,
   ClipboardList,
   Quote as QuoteIcon,
+  ShoppingBag,
 } from "lucide-react";
 import TreeLogo from "@/components/TreeLogo";
 
@@ -29,6 +30,7 @@ const GROUPS = [
       { href: "/admin/blogs", label: "Blogs", icon: Newspaper, exact: false },
       { href: "/admin/projects", label: "Projects & Photos", icon: Images, exact: false },
       { href: "/admin/quotes", label: "Quotes", icon: QuoteIcon, exact: false },
+      { href: "/admin/products", label: "Shop Products", icon: ShoppingBag, exact: false },
     ],
   },
   {

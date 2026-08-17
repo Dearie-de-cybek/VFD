@@ -116,11 +116,15 @@ export default function MembersTable({
                     </div>
                   </td>
                   <td className="px-6">
-                    <span className="rounded-full bg-[#DCFCE7] px-2.5 py-1 text-xs font-semibold text-[#16A34A]">
+                    <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
+                      m.role === "OUTSIDE_MEMBER"
+                        ? "bg-slate-100 text-slate-800 dark:bg-white/10 dark:text-white"
+                        : "bg-[#DCFCE7] text-[#16A34A]"
+                    }`}>
                       {memberRoleLabel(m.role)}
                     </span>
                   </td>
-                  <td className="px-6 text-[#6B7280]">{m.stage || "—"}</td>
+                  <td className="px-6 text-[#6B7280]">{m.stage ?? "-"}</td>
                   <td className="px-6">
                     <div className="flex items-center justify-end gap-1">
                       <Link

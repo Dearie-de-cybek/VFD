@@ -125,17 +125,18 @@ model Media {
 /// role: "AMBASSADOR" | "PARENT" | "SCHOOL_OWNER" | "TEACHER" (validated in app code — sqlite has no native enum)
 /// source: "admin" | "join" — distinguishes admin-entered members from public /join submissions (for notifications)
 model Member {
-  id         String   @id @default(cuid())
-  name       String
-  email      String?
-  phone      String?
-  role       String
-  stage      String?
-  schoolName String?
-  notes      String?
-  source     String   @default("admin")
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id           String   @id @default(cuid())
+  name         String
+  email        String?  @unique
+  phone        String?
+  role         String
+  stage        String?
+  schoolName   String?
+  notes        String?
+  source       String   @default("admin")
+  passwordHash String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model Message {
@@ -173,4 +174,19 @@ model Campaign {
   status      String
   createdAt   DateTime  @default(now())
   sentAt      DateTime?
+}
+
+model Product {
+  id        String   @id @default(cuid())
+  title     String
+  price     Float
+  desc      String
+  img       String?
+  alt       String?
+  link      String?
+  published Boolean  @default(true)
+  featured  Boolean  @default(false)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
