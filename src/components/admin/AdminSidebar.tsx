@@ -47,9 +47,13 @@ const GROUPS = [
 export default function AdminSidebar({
   name,
   email,
+  open,
+  onClose,
 }: {
   name: string;
   email: string;
+  open: boolean;
+  onClose: () => void;
 }) {
   const pathname = usePathname();
 
@@ -57,12 +61,27 @@ export default function AdminSidebar({
     exact ? pathname === href : pathname === href || pathname.startsWith(href + "/");
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-30 flex w-[260px] flex-col border-r border-[#E5E7EB] bg-white dark:border-white/10 dark:bg-[#0B0F0D]">
-      <div className="flex h-[72px] items-center gap-2.5 border-b border-[#E5E7EB] px-6 dark:border-white/10">
-        <TreeLogo className="h-7 w-6 text-[#22C55E]" idPrefix="admin-sb" />
-        <span className="text-[15px] font-semibold text-[#111827] dark:text-white">
-          VDL Admin
-        </span>
+    <aside
+      className={`fixed inset-y-0 left-0 z-50 flex w-[260px] flex-col border-r border-[#E5E7EB] bg-white dark:border-white/10 dark:bg-[#0B0F0D] transition-transform duration-300 md:translate-x-0 ${
+        open ? "translate-x-0" : "-translate-x-full"
+      }`}
+    >
+      <div className="flex h-[72px] items-center justify-between border-b border-[#E5E7EB] px-6 dark:border-white/10">
+        <div className="flex items-center gap-2.5">
+          <TreeLogo className="h-7 w-6 text-[#22C55E]" idPrefix="admin-sb" />
+          <span className="text-[15px] font-semibold text-[#111827] dark:text-white">
+            VDL Admin
+          </span>
+        </div>
+        <button
+          onClick={onClose}
+          className="rounded-md p-1.5 text-[#6B7280] hover:bg-[#F3F4F6] md:hidden dark:hover:bg-white/5"
+          aria-label="Close sidebar"
+        >
+          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
       </div>
 
       <nav className="flex-1 overflow-y-auto px-3 py-5">
@@ -79,6 +98,7 @@ export default function AdminSidebar({
                   <li key={item.href}>
                     <Link
                       href={item.href}
+                      onClick={onClose}
                       className={`flex h-11 items-center gap-3 rounded-[10px] px-3 text-sm transition-colors duration-200 ${
                         active
                           ? "bg-[#DCFCE7] font-medium text-[#111827] dark:bg-[#22C55E]/15 dark:text-white"
@@ -105,6 +125,7 @@ export default function AdminSidebar({
           <li>
             <Link
               href="/admin/settings"
+              onClick={onClose}
               className={`flex h-11 items-center gap-3 rounded-[10px] px-3 text-sm transition-colors duration-200 ${
                 isActive("/admin/settings")
                   ? "bg-[#DCFCE7] font-medium text-[#111827] dark:bg-[#22C55E]/15 dark:text-white"

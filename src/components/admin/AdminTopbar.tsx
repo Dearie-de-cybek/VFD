@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { Search, Sun, Moon, Plus } from "lucide-react";
+import { Search, Sun, Moon, Plus, Menu } from "lucide-react";
 import Link from "next/link";
 import { logoutAction } from "@/app/admin/logout-action";
 import NotificationBell from "./NotificationBell";
@@ -12,6 +12,7 @@ const TITLES: Record<string, { title: string; quickAdd?: string }> = {
   "/admin/blogs": { title: "Blogs", quickAdd: "/admin/blogs/new" },
   "/admin/projects": { title: "Projects & Photos", quickAdd: "/admin/projects/new" },
   "/admin/quotes": { title: "Quotes", quickAdd: "/admin/quotes/new" },
+  "/admin/products": { title: "Shop Products", quickAdd: "/admin/products/new" },
   "/admin/members": { title: "Members", quickAdd: "/admin/members/new" },
   "/admin/messages": { title: "Messages" },
   "/admin/assessments": { title: "Assessments" },
@@ -23,10 +24,12 @@ export default function AdminTopbar({
   name,
   dark,
   onToggleDark,
+  onToggleSidebar,
 }: {
   name: string;
   dark: boolean;
   onToggleDark: () => void;
+  onToggleSidebar: () => void;
 }) {
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
@@ -35,15 +38,24 @@ export default function AdminTopbar({
   const match = TITLES[pathname] ?? { title: fallbackTitle };
 
   return (
-    <header className="flex h-[72px] items-center justify-between gap-6 border-b border-[#E5E7EB] bg-white px-10 dark:border-white/10 dark:bg-[#0B0F0D]">
-      <div className="min-w-0">
-        <p className="text-xs text-[#6B7280]">
-          Admin{segments.length > 1 ? " / " : ""}
-          {segments.slice(1).join(" / ")}
-        </p>
-        <h1 className="truncate text-lg font-bold text-[#111827] dark:text-white">
-          {match.title}
-        </h1>
+    <header className="flex h-[72px] items-center justify-between gap-6 border-b border-[#E5E7EB] bg-white px-5 md:px-10 dark:border-white/10 dark:bg-[#0B0F0D]">
+      <div className="flex items-center gap-3.5 min-w-0">
+        <button
+          onClick={onToggleSidebar}
+          className="rounded-md p-1.5 text-[#6B7280] hover:bg-[#F3F4F6] md:hidden dark:hover:bg-white/5"
+          aria-label="Open sidebar"
+        >
+          <Menu className="h-6 w-6" />
+        </button>
+        <div className="min-w-0">
+          <p className="text-[10px] md:text-xs text-[#6B7280]">
+            Admin{segments.length > 1 ? " / " : ""}
+            {segments.slice(1).join(" / ")}
+          </p>
+          <h1 className="truncate text-base md:text-lg font-bold text-[#111827] dark:text-white">
+            {match.title}
+          </h1>
+        </div>
       </div>
 
       <div className="hidden max-w-md flex-1 items-center gap-2 rounded-[10px] border border-[#E5E7EB] px-3.5 py-2.5 text-sm text-[#6B7280] md:flex dark:border-white/10">
@@ -58,7 +70,7 @@ export default function AdminTopbar({
             className="flex h-10 items-center gap-1.5 rounded-[10px] bg-[#22C55E] px-4 text-sm font-semibold text-white transition-opacity hover:opacity-90"
           >
             <Plus className="h-4 w-4" />
-            New
+            <span className="hidden sm:inline">New</span>
           </Link>
         )}
 
@@ -80,7 +92,7 @@ export default function AdminTopbar({
           <form action={logoutAction}>
             <button
               type="submit"
-              className="text-xs font-medium text-[#6B7280] hover:text-[#111827] dark:hover:text-white"
+              className="hidden sm:inline text-xs font-medium text-[#6B7280] hover:text-[#111827] dark:hover:text-white"
             >
               Sign out
             </button>
