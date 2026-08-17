@@ -104,7 +104,7 @@ export default function Nav() {
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-50">
+      <header className="fixed inset-x-0 top-0 z-[70]">
         {/* top bar — contact + socials */}
         <div className="flex h-[var(--topbar-h)] items-center bg-forest-deep text-cream/85">
           <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-6 px-12 py-4 md:px-16">
